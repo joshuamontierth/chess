@@ -29,6 +29,7 @@ public class PawnMovesCalculator extends PieceMovesCalculator {
         ChessPosition justForward = new ChessPosition(position.rowPos + forward,position.colPos);
         ChessPosition twoForward = new ChessPosition(position.rowPos + forward*2,position.colPos);
 
+        //check if valid first, then just if occupied
         if (board.isValidSquare(justForward) && !board.isOccupied(justForward)) {
             boolean promotion = justForward.rowPos == 1 || justForward.rowPos == 8;
             promotionHelper(out,position,justForward,promotion);
