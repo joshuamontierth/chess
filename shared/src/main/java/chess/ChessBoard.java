@@ -25,6 +25,15 @@ public class ChessBoard {
         board[position.rowPos-1][position.colPos-1] = piece;
 
     }
+    public boolean isValidSquare(ChessPosition position) {
+        return position.rowPos <= 8 && position.colPos <= 8 && position.rowPos >= 1 && position.colPos >= 1;
+    }
+    public boolean isOccupied(ChessPosition position) {
+        return board[position.rowPos][position.colPos] != null;
+    }
+    public boolean hasEnemy(ChessGame.TeamColor team, ChessPosition position) {
+        return board[position.rowPos][position.colPos].pieceColor != team;
+    }
 
     /**
      * Gets a chess piece on the chessboard

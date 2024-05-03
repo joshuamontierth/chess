@@ -33,11 +33,8 @@ public class QueenMovesCalculator extends PieceMovesCalculator {
             return;
             } else {
                 out.add(new ChessMove(position, new ChessPosition(currentPos.rowPos,currentPos.colPos += y), null));
-
                 currentPos.rowPos += x;
                 currentPos.colPos += y;
-
-
             }
         }
     }

@@ -9,14 +9,17 @@ import java.util.Collection;
  * signature of the existing methods.
  */
 public class ChessGame {
-    public static void main(String[] args){
-        ChessBoard board = new ChessBoard();
-        board.addPiece(new ChessPosition(4,4),new ChessPiece(TeamColor.WHITE, ChessPiece.PieceType.QUEEN));
-        ChessPiece queen = board.getPiece(new ChessPosition(4,4));
-        Collection<ChessMove> moves = queen.pieceMoves(board, new ChessPosition(4,4));
-
-
-    }
+//    public static void main(String[] args){
+//        ChessBoard board = new ChessBoard();
+//        board.addPiece(new ChessPosition(6,4),new ChessPiece(TeamColor.BLACK, ChessPiece.PieceType.PAWN));
+//        ChessPiece queen = board.getPiece(new ChessPosition(6,4));
+//        Collection<ChessMove> moves = queen.pieceMoves(board, new ChessPosition(6,4));
+//        for (ChessMove move : moves) {
+//            System.out.println(move);
+//        }
+//
+//
+//    }
     public ChessGame() {
 
     }

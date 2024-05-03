@@ -1,7 +1,6 @@
 package chess;
 
 import java.util.Collection;
-import java.util.Queue;
 
 /**
  * Represents a single chess piece
@@ -10,13 +9,17 @@ import java.util.Queue;
  * signature of the existing methods.
  */
 public class ChessPiece {
-
+    boolean hasMoved;
     ChessGame.TeamColor pieceColor;
     ChessPiece.PieceType type;
+    ChessPiece.PieceType promotionPiece;
 
     public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
         this.pieceColor = pieceColor;
         this.type = type;
+        hasMoved = false;
+        promotionPiece = null;
+
     }
 
     /**
@@ -34,6 +37,9 @@ public class ChessPiece {
     public ChessGame.TeamColor getTeamColor() {
 
         return pieceColor;
+    }
+    public void setPromotionPiece(ChessPiece.PieceType promotionPiece) {
+        this.promotionPiece = promotionPiece;
     }
 
 
