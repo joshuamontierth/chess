@@ -7,7 +7,8 @@ package chess;
  * signature of the existing methods.
  */
 public class ChessBoard {
-    ChessPiece[][] board;
+    ChessPiece[][] board = new ChessPiece[8][8];
+
 
     public ChessBoard() {
         resetBoard();
@@ -20,7 +21,8 @@ public class ChessBoard {
      * @param piece    the piece to add
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
-        board[position.rowPos][position.colPos] = piece;
+
+        board[position.rowPos-1][position.colPos-1] = piece;
 
     }
 
@@ -32,8 +34,8 @@ public class ChessBoard {
      * position
      */
     public ChessPiece getPiece(ChessPosition position) {
-        if (board[position.rowPos][position.colPos] != null) {
-            return board[position.rowPos][position.colPos];
+        if (board[position.rowPos-1][position.colPos-1] != null) {
+            return board[position.rowPos-1][position.colPos-1];
         }
         return null;
     }
@@ -76,6 +78,20 @@ public class ChessBoard {
         // Kings
         addPiece(new ChessPosition(1,5),new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KING));
         addPiece(new ChessPosition(8,5),new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KING));
+    }
+
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 7; i >= 0; i--) {
+            for (int j = 0; j < 8; j++) {
+                if (board[i][j] != null) {
+                    sb.append(board[i][j].toString());
+                    sb.append(" ");
+                }
+            }
+            sb.append("\n");
+        }
+        return sb.toString();
     }
 
 

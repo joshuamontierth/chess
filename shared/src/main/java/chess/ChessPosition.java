@@ -16,6 +16,9 @@ public class ChessPosition {
     public int getColumn() {
         return colPos;
     }
+    public String toString() {
+        return "(" + rowPos + ", " + colPos + ")";
+    }
 
     @Override
     public boolean equals(Object o) {
