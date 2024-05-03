@@ -51,6 +51,7 @@ public class PawnMovesCalculator extends PieceMovesCalculator {
     return out;
     }
     void promotionHelper(Collection<ChessMove> out,ChessPosition oldPosition , ChessPosition newPosition, boolean promote) {
+        //add 4 scenarios for each promotion type
         if (promote) {
             out.add(new ChessMove(oldPosition, newPosition, ChessPiece.PieceType.QUEEN));
             out.add(new ChessMove(oldPosition, newPosition, ChessPiece.PieceType.ROOK));
