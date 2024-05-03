@@ -26,11 +26,11 @@ public class KnightMovesCalculator extends PieceMovesCalculator {
 
             if (board.getPiece(currentPos) != null) {
                 if (board.getPiece(currentPos).pieceColor != board.getPiece(position).pieceColor) {
-                    out.add(new ChessMove(position, new ChessPosition(currentPos.rowPos,currentPos.colPos += y), null));
+                    out.add(new ChessMove(position, new ChessPosition(currentPos.rowPos,currentPos.colPos), null));
                 }
                 return;
             } else {
-                out.add(new ChessMove(position, new ChessPosition(currentPos.rowPos,currentPos.colPos += y), null));
+                out.add(new ChessMove(position, new ChessPosition(currentPos.rowPos,currentPos.colPos), null));
             }
         }
     }
