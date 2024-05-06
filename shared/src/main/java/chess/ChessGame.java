@@ -72,7 +72,7 @@ public class ChessGame {
         if (validMoves.contains(move)) {
             board.addPiece(endPosition,board.getPiece(startPosition));
             board.addPiece(startPosition,null);
-
+            nextTurn();
 
         }
         else {
@@ -132,7 +132,55 @@ public class ChessGame {
         return board;
     }
 
+    public Collection<ChessPosition> getAllTeamPieces(TeamColor team) {
+        Collection<ChessPosition> out = new ArrayList<>();
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                ChessPosition currentPosition = new ChessPosition(i, j);
+                ChessPiece currentPiece = this.board.getPiece(currentPosition);
+                if (currentPiece != null && currentPiece.getTeamColor() == team) {
+                    out.add(currentPosition);
+                }
+            }
+        }
+        return out;
+    }
+    public ChessPosition findKing(TeamColor team) {
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                ChessPosition currentPosition = new ChessPosition(i, j);
+                ChessPiece currentPiece = this.board.getPiece(currentPosition);
+                if (currentPiece != null && currentPiece.getTeamColor() == team && currentPiece.getPieceType() == ChessPiece.PieceType.KING) {
+                    return currentPosition;
+                }
+            }
+        }
+        return null;
+    }
 
+    public TeamColor oppositeTeam(TeamColor team) {
+        if (team == TeamColor.BLACK) {
+            return TeamColor.WHITE;
+        }
+        else {
+            return TeamColor.BLACK;
+        }
+    }
+
+    public Collection<Collection<ChessMove>> findAllTeamMoves(TeamColor team) {
+        Collection<Collection<ChessMove>> out = new ArrayList<>();
+        Collection<ChessPosition> allPieces = getAllTeamPieces(team);
+        for (ChessPosition piece : allPieces) {
+            Collection<ChessMove> moves = validMoves(piece);
+            out.add(moves);
+        }
+        return out;
+
+    }
+
+    public void nextTurn() {
+        this.teamTurn = oppositeTeam(this.teamTurn);
+    }
 
     @Override
     public boolean equals(Object o) {
