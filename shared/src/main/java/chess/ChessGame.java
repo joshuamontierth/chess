@@ -87,10 +87,23 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-
+        ChessPosition king = findKing(teamColor);
+        return isSquareInCheck(teamColor, king);
     }
 
+    public boolean isSquareInCheck(TeamColor teamColor,ChessPosition square) {
 
+        Collection<Collection<ChessMove>> allEnemyMoves = findAllTeamMoves(oppositeTeam(teamColor));
+        for (Collection<ChessMove> moves : allEnemyMoves) {
+            for (ChessMove move : moves) {
+                ChessPosition endPosition = move.getEndPosition();
+                if (endPosition.equals(square)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
 
     /**
@@ -100,7 +113,25 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
+        if (isInCheck(teamColor)) {
+            ChessPosition king = findKing(teamColor);
+            Collection<ChessMove> kingMoves = this.board.getPiece(king).pieceMoves(this.board,king);
+            if (kingMoves.isEmpty()) {
+                return true;
+            }
+            boolean hasEscape = false;
+            for (ChessMove move : kingMoves) {
+                ChessPosition endPosition = move.getEndPosition();
+                if(!isSquareInCheck(teamColor,endPosition)) {
+                    hasEscape = true;
+                }
 
+            }
+            return hasEscape;
+        }
+        else {
+            return false;
+        }
     }
 
     /**
@@ -111,7 +142,8 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-
+        Collection<Collection<ChessMove>> allTeamMoves = findAllTeamMoves(teamColor);
+        return allTeamMoves.isEmpty();
     }
 
     /**
