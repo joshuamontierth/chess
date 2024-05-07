@@ -52,6 +52,7 @@ public class ChessGame {
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         if(this.board.getPiece(startPosition) != null) {
+
             return board.getPiece(startPosition).pieceMoves(this.board,startPosition);
         }
         else {
@@ -69,10 +70,12 @@ public class ChessGame {
         ChessPosition startPosition = move.getStartPosition();
         ChessPosition endPosition = move.getEndPosition();
         Collection<ChessMove> validMoves = validMoves(startPosition);
+
         if (validMoves.contains(move)) {
             board.addPiece(endPosition,board.getPiece(startPosition));
             board.addPiece(startPosition,null);
             nextTurn();
+            board.getPiece(startPosition).hasMoved = true;
 
         }
         else {
@@ -212,6 +215,25 @@ public class ChessGame {
 
     public void nextTurn() {
         this.teamTurn = oppositeTeam(this.teamTurn);
+    }
+
+    public Collection<ChessMove> castle(TeamColor team) {
+        // return empty collection if castling is not possible
+        boolean possible = !board.getPiece(findKing(team)).hasMoved;
+        ChessPiece LeftRook;
+        ChessPiece RightRook;
+        if (team == TeamColor.WHITE) {
+             LeftRook = board.getPiece(new ChessPosition(1,1));
+             RightRook = board.getPiece(new ChessPosition(1,8));
+        }
+        else {
+            LeftRook = board.getPiece(new ChessPosition(8,1));
+            RightRook = board.getPiece(new ChessPosition(8,8));
+        }
+        if ((LeftRook != null && LeftRook.hasMoved) || RightRook != null && RightRook.hasMoved) {
+            possible = false;
+        }
+
     }
 
     @Override
