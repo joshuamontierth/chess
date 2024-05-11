@@ -52,8 +52,10 @@ public class ChessGame {
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         if(this.board.getPiece(startPosition) != null) {
+            Collection<ChessMove> allPieceMoves = board.getPiece(startPosition).pieceMoves(this.board,startPosition);
+            for (ChessMove move : allPieceMoves) {
 
-            return board.getPiece(startPosition).pieceMoves(this.board,startPosition);
+            }
         }
         else {
             return null;
@@ -91,22 +93,18 @@ public class ChessGame {
      */
     public boolean isInCheck(TeamColor teamColor) {
         ChessPosition king = findKing(teamColor);
-        return isSquareInCheck(teamColor, king);
-    }
-
-    public boolean isSquareInCheck(TeamColor teamColor,ChessPosition square) {
-
-        Collection<Collection<ChessMove>> allEnemyMoves = findAllTeamMoves(oppositeTeam(teamColor));
-        for (Collection<ChessMove> moves : allEnemyMoves) {
-            for (ChessMove move : moves) {
-                ChessPosition endPosition = move.getEndPosition();
-                if (endPosition.equals(square)) {
-                    return true;
-                }
+        Collection<ChessMove> allEnemyMoves = findAllTeamMoves(oppositeTeam(teamColor));
+        for (ChessMove move : allEnemyMoves) {
+            ChessPosition endPosition = move.getEndPosition();
+            if (endPosition.equals(king)) {
+                return true;
             }
         }
         return false;
+
+
     }
+
 
 
     /**
@@ -116,25 +114,7 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        if (isInCheck(teamColor)) {
-            ChessPosition king = findKing(teamColor);
-            Collection<ChessMove> kingMoves = this.board.getPiece(king).pieceMoves(this.board,king);
-            if (kingMoves.isEmpty()) {
-                return true;
-            }
-            boolean hasEscape = false;
-            for (ChessMove move : kingMoves) {
-                ChessPosition endPosition = move.getEndPosition();
-                if(!isSquareInCheck(teamColor,endPosition)) {
-                    hasEscape = true;
-                }
-
-            }
-            return hasEscape;
-        }
-        else {
-            return false;
-        }
+        findAllTeamMoves()
     }
 
     /**
@@ -145,8 +125,8 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        Collection<Collection<ChessMove>> allTeamMoves = findAllTeamMoves(teamColor);
-        return allTeamMoves.isEmpty();
+        Collection<ChessMove> allTeamMoves = findAllTeamMoves(teamColor);
+        return (allTeamMoves.isEmpty() && !isInCheck(teamColor));
     }
 
     /**
@@ -202,12 +182,12 @@ public class ChessGame {
         }
     }
 
-    public Collection<Collection<ChessMove>> findAllTeamMoves(TeamColor team) {
-        Collection<Collection<ChessMove>> out = new ArrayList<>();
-        Collection<ChessPosition> allPieces = getAllTeamPieces(team);
+    public Collection<ChessMove> findAllTeamMoves(TeamColor team) {
+       Collection<ChessMove> out = new ArrayList<>();
+       Collection<ChessPosition> allPieces = getAllTeamPieces(team);
         for (ChessPosition piece : allPieces) {
             Collection<ChessMove> moves = validMoves(piece);
-            out.add(moves);
+            out.addAll(moves);
         }
         return out;
 
