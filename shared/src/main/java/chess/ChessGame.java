@@ -52,10 +52,24 @@ public class ChessGame {
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         if(this.board.getPiece(startPosition) != null) {
+            ChessGame.TeamColor pieceTeam = board.getPiece(startPosition).getTeamColor();
             Collection<ChessMove> allPieceMoves = board.getPiece(startPosition).pieceMoves(this.board,startPosition);
+            ChessBoard originalBoard = this.board;
+            Collection<ChessMove> validMoves = new ArrayList<>();
             for (ChessMove move : allPieceMoves) {
+                try {
+                    board = board.clone();
+                    makeMove(move);
+                    if (isInCheck(pieceTeam)) {
+                        validMoves.add(move);
+                    }
+
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
 
             }
+            return validMoves;
         }
         else {
             return null;
@@ -114,7 +128,8 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        findAllTeamMoves()
+        Collection<ChessMove> allTeamMoves = findAllTeamMoves(teamColor);
+        return (allTeamMoves.isEmpty() && isInCheck(teamColor));
     }
 
     /**
