@@ -18,8 +18,6 @@ public class ChessPiece {
         this.pieceColor = pieceColor;
         this.type = type;
         hasMoved = false;
-
-
     }
 
     /**

@@ -253,24 +253,34 @@ public class ChessGame {
         this.teamTurn = oppositeTeam(this.teamTurn);
     }
 
-//    public Collection<ChessMove> castle(TeamColor team) {
-//        // return empty collection if castling is not possible
-//        boolean possible = !board.getPiece(findKing(team)).hasMoved;
-//        ChessPiece LeftRook;
-//        ChessPiece RightRook;
-//        if (team == TeamColor.WHITE) {
-//             LeftRook = board.getPiece(new ChessPosition(1,1));
-//             RightRook = board.getPiece(new ChessPosition(1,8));
-//        }
-//        else {
-//            LeftRook = board.getPiece(new ChessPosition(8,1));
-//            RightRook = board.getPiece(new ChessPosition(8,8));
-//        }
-//        if ((LeftRook != null && LeftRook.hasMoved) || RightRook != null && RightRook.hasMoved) {
-//            possible = false;
-//        }
-//
-//    }
+    public Collection<ChessMove> castling(TeamColor team) {
+        ChessPosition kingSquare = findKing(team);
+        boolean leftCastle = false;
+        boolean rightCastle = false;
+        int row = 1;
+        if (team == TeamColor.BLACK) {
+            row = 8;
+
+        }
+        ChessPosition leftRookSquare = new ChessPosition(row,1);
+        ChessPosition rightRookSquare = new ChessPosition(row,8);
+
+        if (board.getPiece(kingSquare).hasMoved) {
+            return null;
+        }
+        ChessPiece leftRook = board.getPiece(leftRookSquare);
+        ChessPiece rightRook = board.getPiece(rightRookSquare);
+        if (leftRook.getPieceType() == ChessPiece.PieceType.ROOK && !leftRook.hasMoved) {
+            leftCastle = true;
+        }
+        if (rightRook.getPieceType() == ChessPiece.PieceType.ROOK && !rightRook.hasMoved) {
+            rightCastle = true;
+        }
+
+
+
+
+    }
 
     @Override
     public boolean equals(Object o) {
