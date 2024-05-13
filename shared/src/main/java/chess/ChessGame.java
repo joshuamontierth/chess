@@ -255,8 +255,10 @@ public class ChessGame {
 
     public Collection<ChessMove> castling(TeamColor team) {
         ChessPosition kingSquare = findKing(team);
-        boolean leftCastle = false;
-        boolean rightCastle = false;
+        ChessPiece king = board.getPiece(kingSquare);
+        boolean leftCastle = true;
+        boolean rightCastle = true;
+        Collection<ChessMove> moves = new ArrayList<>();
         int row = 1;
         if (team == TeamColor.BLACK) {
             row = 8;
@@ -266,17 +268,65 @@ public class ChessGame {
         ChessPosition rightRookSquare = new ChessPosition(row,8);
 
         if (board.getPiece(kingSquare).hasMoved) {
-            return null;
+            return moves;
         }
         ChessPiece leftRook = board.getPiece(leftRookSquare);
         ChessPiece rightRook = board.getPiece(rightRookSquare);
-        if (leftRook.getPieceType() == ChessPiece.PieceType.ROOK && !leftRook.hasMoved) {
-            leftCastle = true;
+        if (leftRook.getPieceType() != ChessPiece.PieceType.ROOK || leftRook.hasMoved) {
+            leftCastle = false;
         }
-        if (rightRook.getPieceType() == ChessPiece.PieceType.ROOK && !rightRook.hasMoved) {
-            rightCastle = true;
+        if (rightRook.getPieceType() != ChessPiece.PieceType.ROOK || rightRook.hasMoved) {
+            rightCastle = false;
         }
 
+        //check in-between squares
+
+        for (int col = 2; col <= 4; col++) {
+            if (board.getPiece(new ChessPosition(row, col)) != null) {
+                leftCastle = false;
+                break;
+            }
+        }
+
+        for (int col = 6; col <= 7; col++) {
+            if (board.getPiece(new ChessPosition(row, col)) != null) {
+                rightCastle = false;
+                break;
+            }
+        }
+        ChessBoard originalBoard = this.board;
+        try {
+            board = board.clone();
+            if (rightCastle) {
+                board.addPiece(rightRookSquare,king);
+                if (isInCheck(team)) {
+                    rightCastle = false;
+                }
+                else {
+                    moves.add(new ChessMove(kingSquare,new ChessPosition(row,7),null));
+                    moves.add(new ChessMove(rightRookSquare,new ChessPosition(row,6),null));
+                }
+            }
+            board = originalBoard;
+
+            board = board.clone();
+            if (leftCastle) {
+                board.addPiece(leftRookSquare,king);
+                if (isInCheck(team)) {
+                    leftCastle = false;
+                }
+                else {
+                    moves.add(new ChessMove(kingSquare,new ChessPosition(row,3),null));
+                    moves.add(new ChessMove(leftRookSquare,new ChessPosition(row,4),null));
+                }
+            }
+            board = originalBoard;
+
+
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
+        return moves;
 
 
 
