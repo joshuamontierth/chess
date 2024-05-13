@@ -57,6 +57,9 @@ public class ChessBoard implements Cloneable {
      * position
      */
     public ChessPiece getPiece(ChessPosition position) {
+        if (position == null) {
+            return null;
+        }
         if (board[position.rowPos-1][position.colPos-1] != null) {
             return board[position.rowPos-1][position.colPos-1];
         }
@@ -109,8 +112,12 @@ public class ChessBoard implements Cloneable {
             for (int j = 0; j < 8; j++) {
                 if (board[i][j] != null) {
                     sb.append(board[i][j].toString());
-                    sb.append(" ");
                 }
+                else {
+                    sb.append("    ");
+
+                }
+                sb.append(" | ");
             }
             sb.append("\n");
         }
