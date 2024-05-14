@@ -13,8 +13,10 @@ import java.util.Objects;
 public class ChessGame {
     private TeamColor teamTurn;
     private ChessBoard board;
+    private ChessMove previousMove;
     public ChessGame() {
         teamTurn = TeamColor.WHITE;
+        previousMove = null;
         board = new ChessBoard();
         board.resetBoard();
     }
@@ -80,6 +82,10 @@ public class ChessGame {
                     }
                 }
             }
+            ChessMove enPassant = enPassant(startPosition);
+            if (enPassant != null) {
+                validMoves.add(enPassant);
+            }
             return validMoves;
         }
         else {
@@ -108,6 +114,7 @@ public class ChessGame {
         Collection<ChessMove> validMoves = validMoves(startPosition);
 
         if (validMoves.contains(move)) {
+            executeEnPassant(move);
             if (move.getPromotionPiece() == null) {
                 board.addPiece(endPosition, board.getPiece(startPosition));
             }
@@ -121,12 +128,25 @@ public class ChessGame {
 
             nextTurn();
 
-
+            previousMove = move;
         }
 
         else {
 
             throw new InvalidMoveException();
+        }
+    }
+    public void executeEnPassant(ChessMove move) {
+        if (previousMove == null) {
+            return;
+        }
+        ChessPosition startPosition = move.getStartPosition();
+        ChessPosition endPosition = move.getEndPosition();
+        int startCol = startPosition.getColumn();
+        int endCol = endPosition.getColumn();
+
+        if (board.getPiece(startPosition).getPieceType() == ChessPiece.PieceType.PAWN && startCol != endCol && board.getPiece(endPosition) == null) {
+            board.addPiece(new ChessPosition(startPosition.getRow(),endCol),null);
         }
     }
     public void executeCastling(ChessMove move) {
@@ -355,6 +375,35 @@ public class ChessGame {
         }
         return moves;
 
+    }
+
+    public ChessMove enPassant(ChessPosition pawnPosition) {
+        if (previousMove == null) {
+            return null;
+        }
+        if (board.getPiece(pawnPosition).getPieceType() != ChessPiece.PieceType.PAWN) {
+            return null;
+        }
+        if(board.getPiece(previousMove.getEndPosition()).getPieceType() != ChessPiece.PieceType.PAWN) {
+            return null;
+        }
+        if(Math.abs(previousMove.getEndPosition().getRow() - previousMove.getStartPosition().getRow()) != 2) {
+            return null;
+        }
+        int pawnCol = pawnPosition.getColumn();
+        int pawnRow = pawnPosition.getRow();
+        if (Math.abs(previousMove.getEndPosition().getColumn() - pawnCol) != 1) {
+            return null;
+        }
+        if (pawnRow != previousMove.getEndPosition().getRow()) {
+            return null;
+        }
+        TeamColor team = board.getPiece(pawnPosition).getTeamColor();
+        int forward = 1;
+        if (team == TeamColor.BLACK) {
+            forward = -1;
+        }
+        return new ChessMove(pawnPosition,new ChessPosition(pawnRow + forward,previousMove.endPosition.getColumn()),null);
     }
 
     @Override
