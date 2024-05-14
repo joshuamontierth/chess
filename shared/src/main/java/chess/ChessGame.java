@@ -71,11 +71,13 @@ public class ChessGame {
                 }
 
             }
-            Collection<ChessMove> castlingMoves = castling(pieceTeam);
-            for (ChessMove move : castlingMoves) {
+            if (startPosition.equals(findKing(pieceTeam))) {
+                Collection<ChessMove> castlingMoves = castling(pieceTeam);
+                for (ChessMove move : castlingMoves) {
+                    if (move.getStartPosition().equals(startPosition)) {
 
-                if (move.getStartPosition().equals(startPosition)) {
-                    validMoves.add(move);
+                        validMoves.add(move);
+                    }
                 }
             }
             return validMoves;
@@ -112,8 +114,11 @@ public class ChessGame {
             else {
                 board.addPiece(endPosition, new ChessPiece(teamTurn,move.getPromotionPiece()));
             }
+
             board.getPiece(startPosition).hasMoved = true;
+            executeCastling(move);
             board.addPiece(startPosition,null);
+
             nextTurn();
 
 
@@ -123,6 +128,29 @@ public class ChessGame {
 
             throw new InvalidMoveException();
         }
+    }
+    public void executeCastling(ChessMove move) {
+        ChessPosition startPosition = move.getStartPosition();
+        ChessPosition endPosition = move.getEndPosition();
+        int row = startPosition.getRow();
+
+        if (board.getPiece(startPosition) != null && board.getPiece(startPosition).getPieceType() == ChessPiece.PieceType.KING) {
+            if ((startPosition.getColumn()- endPosition.getColumn()) == 2) {
+                ChessPosition rookStart = new ChessPosition(row,1);
+                ChessPosition rookEnd = new ChessPosition(row,4);
+                board.addPiece(rookEnd,board.getPiece(rookStart));
+                board.getPiece(rookStart).hasMoved = true;
+                board.addPiece(rookStart,null);
+            }
+            else if ((endPosition.getColumn() - startPosition.getColumn()) == 2) {
+                ChessPosition rookStart = new ChessPosition(row,8);
+                ChessPosition rookEnd = new ChessPosition(row,6);
+                board.addPiece(rookEnd,board.getPiece(rookStart));
+                board.getPiece(rookStart).hasMoved = true;
+                board.addPiece(rookStart,null);
+            }
+        }
+
     }
 
     /**
@@ -283,7 +311,6 @@ public class ChessGame {
         int row = 1;
         if (team == TeamColor.BLACK) {
             row = 8;
-
         }
         ChessPosition leftRookSquare = new ChessPosition(row,1);
         ChessPosition rightRookSquare = new ChessPosition(row,8);
@@ -294,18 +321,18 @@ public class ChessGame {
             return moves;
         }
 
-        if (leftRook == null || isSquareInCheck(leftRookSquare,team)|| leftRook.getPieceType() != ChessPiece.PieceType.ROOK || leftRook.hasMoved) {
+        if (leftRook == null || leftRook.getPieceType() != ChessPiece.PieceType.ROOK || leftRook.hasMoved) {
             leftCastle = false;
         }
-        if (rightRook == null ||isSquareInCheck(rightRookSquare,team)|| rightRook.getPieceType() != ChessPiece.PieceType.ROOK || rightRook.hasMoved) {
+        if (rightRook == null || rightRook.getPieceType() != ChessPiece.PieceType.ROOK || rightRook.hasMoved) {
             rightCastle = false;
         }
 
-        //check in-between squares
 
+        //check in-between squares
         for (int col = 2; col <= 4; col++) {
             ChessPosition currentPos = new ChessPosition(row, col);
-            if (board.getPiece(currentPos) != null && isSquareInCheck(currentPos,team)) {
+            if (board.getPiece(currentPos) != null || isSquareInCheck(currentPos,team)) {
                 leftCastle = false;
                 break;
             }
@@ -313,13 +340,19 @@ public class ChessGame {
 
         for (int col = 6; col <= 7; col++) {
             ChessPosition currentPos = new ChessPosition(row, col);
-            if (board.getPiece(currentPos) != null && isSquareInCheck(currentPos,team)) {
+            if (board.getPiece(currentPos) != null || isSquareInCheck(currentPos,team)) {
                 rightCastle = false;
                 break;
             }
         }
-
-
+        if (leftCastle) {
+            ChessMove queenSideCastle = new ChessMove(kingSquare,new ChessPosition(row,3),null);
+            moves.add(queenSideCastle);
+        }
+        if (rightCastle) {
+            ChessMove kingSideCastle = new ChessMove(kingSquare,new ChessPosition(row,7),null);
+            moves.add(kingSideCastle);
+        }
         return moves;
 
     }

@@ -13,18 +13,14 @@ public class ChessMove {
     ChessPosition startPosition;
     ChessPosition endPosition;
     ChessPiece.PieceType promotionPiece;
-    boolean leftCastle;
-    boolean rightCastle;
-    boolean enPassant;
+
 
     public ChessMove(ChessPosition startPosition, ChessPosition endPosition,
                      ChessPiece.PieceType promotionPiece) {
         this.startPosition = startPosition;
         this.endPosition = endPosition;
         this.promotionPiece = promotionPiece;
-        leftCastle = false;
-        rightCastle = false;
-        enPassant = false;
+
 
     }
     public ChessPosition getStartPosition() {
