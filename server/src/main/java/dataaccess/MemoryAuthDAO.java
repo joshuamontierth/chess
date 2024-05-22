@@ -2,10 +2,10 @@ package dataaccess;
 
 import model.AuthData;
 
-import java.util.HashMap;
+import java.util.TreeMap;
 
 public class MemoryAuthDAO implements AuthDAOInterface{
-    HashMap<String,AuthData> auths;
+    static TreeMap<String,AuthData> auths;
     @Override
     public void creatAuth(AuthData auth) {
         auths.put(auth.authToken(),auth);

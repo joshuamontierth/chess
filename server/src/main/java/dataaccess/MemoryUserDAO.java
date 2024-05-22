@@ -2,10 +2,11 @@ package dataaccess;
 
 import model.UserData;
 
-import java.util.HashMap;
+
+import java.util.TreeMap;
 
 public class MemoryUserDAO implements UserDAOInterface {
-    HashMap<String, UserData> users;
+    static TreeMap<String, UserData> users;
 
 
     @Override

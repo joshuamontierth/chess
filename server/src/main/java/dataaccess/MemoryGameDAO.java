@@ -3,10 +3,10 @@ package dataaccess;
 import model.GameData;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.TreeMap;
 
 public class MemoryGameDAO implements GameDAOInterface{
-    HashMap<Integer, GameData> games;
+    static TreeMap<Integer, GameData> games;
     @Override
     public void clear() {
         games.clear();
