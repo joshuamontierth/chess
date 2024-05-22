@@ -9,8 +9,15 @@ import utilities.CreateGameResult;
 
 import java.util.ArrayList;
 
-public class CreateGameService {
+public class CreateGameService extends Service {
     public CreateGameResult createGame(CreateGameRequest req) {
+        try {
+            verifyUser(req.authToken());
+        }
+        catch (Exception e) {
+            return null
+        }
+
         GameDAOInterface gameDAO = new MemoryGameDAO();
         ArrayList<GameData> games = gameDAO.listGames();
         int prevGameID = games.getLast().gameID();
