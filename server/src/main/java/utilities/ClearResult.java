@@ -1,4 +1,3 @@
 package utilities;
 
-public class ClearResult {
-}
+public record ClearResult() {}
