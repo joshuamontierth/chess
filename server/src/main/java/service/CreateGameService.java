@@ -6,21 +6,25 @@ import dataaccess.MemoryGameDAO;
 import model.GameData;
 import utilities.CreateGameRequest;
 import utilities.CreateGameResult;
+import utilities.HTMLException;
 
 import java.util.ArrayList;
 
 public class CreateGameService extends Service {
-    public CreateGameResult createGame(CreateGameRequest req) {
+    public CreateGameResult createGame(CreateGameRequest req) throws HTMLException {
         try {
             verifyUser(req.authToken());
         }
         catch (Exception e) {
-            return null
+            throw new HTMLException("Unauthorized", 401);
         }
 
         GameDAOInterface gameDAO = new MemoryGameDAO();
         ArrayList<GameData> games = gameDAO.listGames();
         int prevGameID = games.getLast().gameID();
-        GameData newGame = new GameData(prevGameID++,null,null,req.gameName(),new ChessBoard())
+        int newGameID = prevGameID + 1;
+        GameData newGame = new GameData(newGameID,null,null,req.gameName(),new ChessBoard());
+        gameDAO.createGame(newGame);
+        return new CreateGameResult(newGameID);
     }
 }

@@ -1,4 +1,4 @@
 package utilities;
 
-public record RegisterUserResult(String username, String authToken, String message) {
+public record RegisterUserResult(String username, String authToken) {
 }
