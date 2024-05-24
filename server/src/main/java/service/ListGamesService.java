@@ -4,7 +4,6 @@ import dataaccess.*;
 import model.GameData;
 import utilities.*;
 
-import javax.swing.text.html.HTML;
 import java.util.ArrayList;
 
 public class ListGamesService extends Service{
