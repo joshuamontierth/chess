@@ -45,10 +45,10 @@ public class JoinGameService extends Service {
         }
         GameData updatedGame;
         if (req.playerColor().equals("WHITE")) {
-            updatedGame = new GameData(game.gameID(),username,game.blackUsername(), game.gameName(), game.board()));
+            updatedGame = new GameData(game.gameID(),username,game.blackUsername(), game.gameName(), game.board());
         }
         else {
-            updatedGame = new GameData(game.gameID(),game.whiteUsername(),username, game.gameName(), game.board()));
+            updatedGame = new GameData(game.gameID(),game.whiteUsername(),username, game.gameName(), game.board());
 
         }
         return updatedGame;

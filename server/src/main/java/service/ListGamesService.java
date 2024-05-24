@@ -1,4 +1,17 @@
 package service;
 
-public class ListGamesService {
+import dataaccess.*;
+import model.GameData;
+import utilities.*;
+
+import javax.swing.text.html.HTML;
+import java.util.ArrayList;
+
+public class ListGamesService extends Service{
+    public ListGamesResult listGames(ListGamesRequest req) throws HTMLException {
+        verifyUser(req.authToken());
+        GameDAOInterface gameDAO = new MemoryGameDAO();
+        ArrayList<GameData> gameList = gameDAO.listGames();
+        return new ListGamesResult(gameList);
+    }
 }

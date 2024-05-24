@@ -1,12 +1,9 @@
 package service;
 
 import chess.ChessBoard;
-import dataaccess.GameDAOInterface;
-import dataaccess.MemoryGameDAO;
 import model.GameData;
-import utilities.CreateGameRequest;
-import utilities.CreateGameResult;
-import utilities.HTMLException;
+import dataaccess.*;
+import utilities.*;
 
 import java.util.ArrayList;
 
