@@ -12,13 +12,7 @@ import java.util.ArrayList;
 
 public class CreateGameService extends Service {
     public CreateGameResult createGame(CreateGameRequest req) throws HTMLException {
-        try {
-            verifyUser(req.authToken());
-        }
-        catch (Exception e) {
-            throw new HTMLException("Unauthorized", 401);
-        }
-
+        verifyUser(req.authToken());
         GameDAOInterface gameDAO = new MemoryGameDAO();
         ArrayList<GameData> games = gameDAO.listGames();
         int prevGameID = games.getLast().gameID();
