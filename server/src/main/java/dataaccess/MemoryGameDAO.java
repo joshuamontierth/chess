@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.TreeMap;
 
 public class MemoryGameDAO implements GameDAOInterface{
-    static TreeMap<Integer, GameData> games;
+    static TreeMap<Integer, GameData> games = new TreeMap<>();
     @Override
     public void clear() {
         games.clear();

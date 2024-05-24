@@ -5,7 +5,7 @@ import utilities.ClearRequest;
 import utilities.ClearResult;
 
 public class ClearService {
-    public ClearResult clear(ClearRequest req) {
+    public static ClearResult clear(ClearRequest req) {
         AuthDAOInterface authDAO = new MemoryAuthDAO();
         authDAO.clear();
         GameDAOInterface gameDAO = new MemoryGameDAO();

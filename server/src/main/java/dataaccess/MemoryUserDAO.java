@@ -6,7 +6,7 @@ import model.UserData;
 import java.util.TreeMap;
 
 public class MemoryUserDAO implements UserDAOInterface {
-    static TreeMap<String, UserData> users;
+    static TreeMap<String, UserData> users = new TreeMap<>();
 
 
     @Override
