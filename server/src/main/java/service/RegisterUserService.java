@@ -1,6 +1,7 @@
 package service;
 
 import dataaccess.*;
+import model.AuthData;
 import model.UserData;
 import utilities.*;
 
@@ -12,6 +13,7 @@ public class RegisterUserService {
         checkIfUserExists(req,userDAO);
         userDAO.createUser(new UserData(req.username(), req.password(), req.email()));
         String authToken = UUID.randomUUID().toString();
+        new MemoryAuthDAO().createAuth(new AuthData(authToken,req.username()));
         return new RegisterUserResult(req.username(), authToken);
     }
     private static void checkIfUserExists(RegisterUserRequest req, UserDAOInterface userDAO) throws HTMLException {

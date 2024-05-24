@@ -7,7 +7,7 @@ public class HTMLException extends Exception{
         this.errorCode = errorCode;
     }
     int errorCode;
-    int getErrorCode() {
+    public int getErrorCode() {
         return errorCode;
     }
 

@@ -7,7 +7,7 @@ import java.util.TreeMap;
 public class MemoryAuthDAO implements AuthDAOInterface{
     static TreeMap<String,AuthData> auths = new TreeMap<>();
     @Override
-    public void creatAuth(AuthData auth) {
+    public void createAuth(AuthData auth) {
         auths.put(auth.authToken(),auth);
     }
 

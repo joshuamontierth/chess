@@ -4,7 +4,7 @@ import dataaccess.*;
 import utilities.*;
 
 public class LogoutService extends Service {
-    public LogoutResult login(LogoutRequest req) throws HTMLException {
+    static public LogoutResult logout(LogoutRequest req) throws HTMLException {
         AuthDAOInterface authDAO = new MemoryAuthDAO();
 
         verifyUser(req.authToken());

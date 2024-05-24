@@ -7,7 +7,7 @@ import model.AuthData;
 import utilities.HTMLException;
 
 public class Service {
-    String verifyUser(String authToken) throws HTMLException {
+    static String verifyUser(String authToken) throws HTMLException {
         try {
             AuthDAOInterface authDAO = new MemoryAuthDAO();
             AuthData auth = authDAO.getAuth(authToken);
