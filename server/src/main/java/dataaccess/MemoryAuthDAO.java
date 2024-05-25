@@ -12,8 +12,8 @@ public class MemoryAuthDAO implements AuthDAOInterface{
     }
 
     @Override
-    public AuthData getAuth(String AuthToken) throws DataAccessException {
-        AuthData auth = auths.get(AuthToken);
+    public AuthData getAuth(String authToken) throws DataAccessException {
+        AuthData auth = auths.get(authToken);
         if (auth == null) {
             throw new DataAccessException("Error: unauthorized");
 
@@ -22,9 +22,9 @@ public class MemoryAuthDAO implements AuthDAOInterface{
     }
 
     @Override
-    public void deleteAuth(String AuthToken) throws DataAccessException {
-        if (auths.containsKey(AuthToken)) {
-            auths.remove(AuthToken);
+    public void deleteAuth(String authToken) throws DataAccessException {
+        if (auths.containsKey(authToken)) {
+            auths.remove(authToken);
         }
         else {
             throw new DataAccessException("Error: unauthorized");

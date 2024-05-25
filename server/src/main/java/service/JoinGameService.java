@@ -4,7 +4,6 @@ import dataaccess.DataAccessException;
 import dataaccess.GameDAOInterface;
 import dataaccess.MemoryGameDAO;
 import model.GameData;
-import utilities.HTMLException;
 import utilities.JoinGameRequest;
 import utilities.JoinGameResult;
 

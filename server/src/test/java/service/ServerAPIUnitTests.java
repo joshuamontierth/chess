@@ -23,7 +23,7 @@ public class ServerAPIUnitTests {
     }
 
     @Test
-    public void RegisterUserSuccessTest() throws Exception {
+    public void registerUserSuccessTest() throws Exception {
         //normal behavior
         RegisterUserResult expected = new RegisterUserResult("username","12345");
         RegisterUserResult actual = RegisterUserService.registerUser(new RegisterUserRequest("username","password","email@email.com"));
@@ -31,12 +31,12 @@ public class ServerAPIUnitTests {
         Assertions.assertNotNull(actual.authToken());
     }
     @Test
-    public void RegisterUserFailTest() {
+    public void registerUserFailTest() {
         //No username given
         Assertions.assertThrows(HTMLException.class,() -> RegisterUserService.registerUser(new RegisterUserRequest("","password","email@email.com")));
     }
     @Test
-    public void LoginUserSuccessTest() throws Exception {
+    public void loginUserSuccessTest() throws Exception {
         //normal behavior
         LoginResult expected = new LoginResult("Clark","12345");
         LoginResult actual = LoginService.login(new LoginRequest("Clark","Kent"));
@@ -44,36 +44,36 @@ public class ServerAPIUnitTests {
         Assertions.assertNotNull(actual.authToken());
     }
     @Test
-    public void LoginUserFailTest() {
+    public void loginUserFailTest() {
         //Wrong password
         Assertions.assertThrows(HTMLException.class,() -> LoginService.login(new LoginRequest("Clark","password")));
     }
     @Test
-    public void LogoutUserSuccessTest() throws Exception {
+    public void logoutUserSuccessTest() throws Exception {
         //normal behavior
         LogoutResult expected = new LogoutResult();
         LogoutResult actual = LogoutService.logout(new LogoutRequest(authToken));
         Assertions.assertEquals(expected,actual);
     }
     @Test
-    public void LogoutUserFailTest() {
+    public void logoutUserFailTest() {
         //No auth token
         Assertions.assertThrows(HTMLException.class,() -> LogoutService.logout(new LogoutRequest(null)));
     }
     @Test
-    public void CreateGameSuccessTest() throws Exception {
+    public void createGameSuccessTest() throws Exception {
         //normal behavior
         CreateGameResult expected = new CreateGameResult(2);
         CreateGameResult actual = CreateGameService.createGame(new CreateGameRequest(authToken,"Justice League"));
         Assertions.assertEquals(expected,actual);
     }
     @Test
-    public void CreateGameFailTest() {
+    public void createGameFailTest() {
         //No game name
         Assertions.assertThrows(HTMLException.class,() -> CreateGameService.createGame(new CreateGameRequest(authToken,null)));
     }
     @Test
-    public void JoinGameSuccessTest() throws Exception {
+    public void joinGameSuccessTest() throws Exception {
         //normal behavior
         JoinGameResult actual = JoinGameService.joinGame(new JoinGameRequest(authToken,"WHITE",myGameID));
         GameDAOInterface gameDAO = new MemoryGameDAO();
@@ -82,12 +82,12 @@ public class ServerAPIUnitTests {
 
     }
     @Test
-    public void JoinGameFailTest() {
+    public void joinGameFailTest() {
         //Try to join as green
         Assertions.assertThrows(HTMLException.class,() -> JoinGameService.joinGame(new JoinGameRequest(authToken,"GREEN",myGameID)));
     }
     @Test
-    public void ListGamesSuccessTest() throws Exception {
+    public void listGamesSuccessTest() throws Exception {
         //normal behavior
         CreateGameService.createGame(new CreateGameRequest(authToken,"Flash"));
         CreateGameService.createGame(new CreateGameRequest(authToken,"Batman"));
@@ -98,13 +98,13 @@ public class ServerAPIUnitTests {
 
     }
     @Test
-    public void ListGamesFailTest() {
+    public void listGamesFailTest() {
         //No auth token
         Assertions.assertThrows(HTMLException.class,() -> ListGamesService.listGames(new ListGamesRequest(null)));
     }
 
     @Test
-    public void ClearSuccessTest() throws Exception {
+    public void clearSuccessTest() throws Exception {
         //make sure it clears all databases
         CreateGameService.createGame(new CreateGameRequest(authToken,"Robin"));
         ClearService.clear(new ClearRequest());

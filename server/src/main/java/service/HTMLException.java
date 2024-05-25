@@ -1,4 +1,4 @@
-package utilities;
+package service;
 
 public class HTMLException extends Exception{
     public HTMLException(String message,int errorCode) {
