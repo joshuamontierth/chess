@@ -1,6 +1,6 @@
 package service;
 
-import chess.ChessBoard;
+import chess.ChessGame;
 import model.GameData;
 import dataaccess.*;
 import utilities.*;
@@ -18,9 +18,8 @@ public class CreateGameService extends Service {
             newGameID = prevGameID + 1;
         }
 
-        GameData newGame = new GameData(newGameID,null,null,req.gameName(),new ChessBoard());
+        GameData newGame = new GameData(newGameID,null,null,req.gameName(),new ChessGame());
         gameDAO.createGame(newGame);
-        System.out.println(newGameID);
         return new CreateGameResult(newGameID);
     }
 }

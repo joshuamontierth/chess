@@ -16,14 +16,22 @@ public class Server {
         // Register your endpoints and handle exceptions here.
         Gson gson = new Gson();
         Spark.delete("/db", (req, res) -> serialize(ClearService.clear(new ClearRequest())));
-        Spark.post("/user", (req, res) -> serialize(RegisterUserService.registerUser(gson.fromJson(req.body(), RegisterUserRequest.class))));
+        Spark.post("/user", (req, res) -> {
+            try {
+                return serialize(RegisterUserService.registerUser(gson.fromJson(req.body(), RegisterUserRequest.class)));
+            }
+            catch (HTMLException e) {
+                res.status(e.getErrorCode());
+                return serialize(new ErrorResponse(e.getMessage()));
+            }
+        });
         Spark.post("/session", (req, res) -> {
             try {
                 return serialize(LoginService.login(gson.fromJson(req.body(), LoginRequest.class)));
             }
             catch (HTMLException e) {
                 res.status(e.getErrorCode());
-                return serialize(e.getMessage());
+                return serialize(new ErrorResponse(e.getMessage()));
             }
         });
 
@@ -34,22 +42,43 @@ public class Server {
             }
             catch (HTMLException e) {
                 res.status(e.getErrorCode());
-                return serialize(e.getMessage());
+                return serialize(new ErrorResponse(e.getMessage()));
             }
         });
 
         Spark.post("/game", (req, res) -> {
             try {
                 CreateGameRequest gameName = gson.fromJson(req.body(),CreateGameRequest.class);
-                System.out.println(gameName);
+
                 return serialize(CreateGameService.createGame(new CreateGameRequest(req.headers("Authorization"),gameName.gameName())));
             }
             catch (HTMLException e) {
                 res.status(e.getErrorCode());
-                return serialize(e.getMessage());
+                return serialize(new ErrorResponse(e.getMessage()));
             }
         });
-        Spark.post("/user", (req, res) -> serialize(RegisterUserService.registerUser(gson.fromJson(req.body(), RegisterUserRequest.class))));
+
+        Spark.get("/game", (req, res) -> {
+            try {
+                return serialize(ListGamesService.listGames(new ListGamesRequest(req.headers("Authorization"))));
+            }
+            catch (HTMLException e) {
+                res.status(e.getErrorCode());
+                return serialize(new ErrorResponse(e.getMessage()));
+            }
+        });
+
+        Spark.put("/game", (req, res) -> {
+            try {
+                JoinGameRequest request = gson.fromJson(req.body(),JoinGameRequest.class);
+
+                return serialize(JoinGameService.joinGame(new JoinGameRequest(req.headers("Authorization"),request.playerColor(),request.gameID())));
+            }
+            catch (HTMLException e) {
+                res.status(e.getErrorCode());
+                return serialize(new ErrorResponse(e.getMessage()));
+            }
+        });
 
         Spark.awaitInitialization();
         return Spark.port();

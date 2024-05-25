@@ -15,7 +15,7 @@ public class MemoryAuthDAO implements AuthDAOInterface{
     public AuthData getAuth(String AuthToken) throws DataAccessException {
         AuthData auth = auths.get(AuthToken);
         if (auth == null) {
-            throw new DataAccessException("AuthToken does not exist");
+            throw new DataAccessException("Error: unauthorized");
 
         }
         return auth;
@@ -27,12 +27,14 @@ public class MemoryAuthDAO implements AuthDAOInterface{
             auths.remove(AuthToken);
         }
         else {
-            throw new DataAccessException("AuthToken does not exist");
+            throw new DataAccessException("Error: unauthorized");
         }
     }
 
     @Override
     public void clear() {
+
         auths.clear();
+
     }
 }

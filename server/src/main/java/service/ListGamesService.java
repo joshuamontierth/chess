@@ -7,7 +7,7 @@ import utilities.*;
 import java.util.Collection;
 
 public class ListGamesService extends Service{
-    public ListGamesResult listGames(ListGamesRequest req) throws HTMLException {
+    public static ListGamesResult listGames(ListGamesRequest req) throws HTMLException {
         verifyUser(req.authToken());
         GameDAOInterface gameDAO = new MemoryGameDAO();
         Collection<GameData> gameList = gameDAO.listGames();
