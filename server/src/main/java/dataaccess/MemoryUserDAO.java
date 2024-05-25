@@ -28,5 +28,8 @@ public class MemoryUserDAO implements UserDAOInterface {
     public void clear() {
         users.clear();
     }
+    public int getSize() {
+        return users.size();
+    }
 
 }

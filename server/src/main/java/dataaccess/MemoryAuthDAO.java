@@ -37,4 +37,7 @@ public class MemoryAuthDAO implements AuthDAOInterface{
         auths.clear();
 
     }
+    public int getSize() {
+        return auths.size();
+    }
 }

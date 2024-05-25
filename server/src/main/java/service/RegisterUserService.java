@@ -11,8 +11,12 @@ public class RegisterUserService {
     public static RegisterUserResult registerUser(RegisterUserRequest req) throws HTMLException {
         UserDAOInterface userDAO = new MemoryUserDAO();
         if (req.username() == null || req.password() == null || req.email() == null) {
+            throw new HTMLException("Error: Bad request", 400);
+        }
+        if (req.username().isEmpty() || req.password().isEmpty() || req.email().isEmpty()) {
             throw new HTMLException("Error: Fill out all required fields", 400);
         }
+
         checkIfUserExists(req,userDAO);
 
         userDAO.createUser(new UserData(req.username(), req.password(), req.email()));

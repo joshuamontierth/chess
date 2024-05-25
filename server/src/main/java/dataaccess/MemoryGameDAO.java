@@ -41,4 +41,7 @@ public class MemoryGameDAO implements GameDAOInterface{
             throw new DataAccessException("Game does not exist");
         }
     }
+    public int getSize() {
+        return games.size();
+    }
 }
