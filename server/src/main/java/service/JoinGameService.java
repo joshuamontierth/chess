@@ -9,7 +9,7 @@ import utilities.JoinGameResult;
 
 public class JoinGameService extends Service {
     public static JoinGameResult joinGame(JoinGameRequest req) throws HTMLException {
-        String username = verifyUser(req.AuthToken());
+        String username = verifyUser(req.authToken());
         GameDAOInterface gameDAO = new MemoryGameDAO();
         GameData game;
         if(req.playerColor() == null || req.gameID() == null) {
