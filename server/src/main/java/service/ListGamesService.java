@@ -4,13 +4,13 @@ import dataaccess.*;
 import model.GameData;
 import utilities.*;
 
-import java.util.ArrayList;
+import java.util.Collection;
 
 public class ListGamesService extends Service{
     public ListGamesResult listGames(ListGamesRequest req) throws HTMLException {
         verifyUser(req.authToken());
         GameDAOInterface gameDAO = new MemoryGameDAO();
-        ArrayList<GameData> gameList = gameDAO.listGames();
+        Collection<GameData> gameList = gameDAO.listGames();
         return new ListGamesResult(gameList);
     }
 }

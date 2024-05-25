@@ -2,6 +2,7 @@ package dataaccess;
 
 import model.GameData;
 
+
 import java.util.ArrayList;
 import java.util.TreeMap;
 
@@ -28,7 +29,7 @@ public class MemoryGameDAO implements GameDAOInterface{
 
     @Override
     public ArrayList<GameData> listGames() {
-        return (ArrayList<GameData>) games.values();
+        return new ArrayList<>(games.values());
     }
 
     @Override

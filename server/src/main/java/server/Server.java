@@ -2,10 +2,7 @@ package server;
 
 import com.google.gson.Gson;
 
-import service.ClearService;
-import service.LoginService;
-import service.LogoutService;
-import service.RegisterUserService;
+import service.*;
 import spark.*;
 import utilities.*;
 
@@ -41,7 +38,17 @@ public class Server {
             }
         });
 
-        Spark.post("/user", (req, res) -> serialize(RegisterUserService.registerUser(gson.fromJson(req.body(), RegisterUserRequest.class))));
+        Spark.post("/game", (req, res) -> {
+            try {
+                CreateGameRequest gameName = gson.fromJson(req.body(),CreateGameRequest.class);
+                System.out.println(gameName);
+                return serialize(CreateGameService.createGame(new CreateGameRequest(req.headers("Authorization"),gameName.gameName())));
+            }
+            catch (HTMLException e) {
+                res.status(e.getErrorCode());
+                return serialize(e.getMessage());
+            }
+        });
         Spark.post("/user", (req, res) -> serialize(RegisterUserService.registerUser(gson.fromJson(req.body(), RegisterUserRequest.class))));
 
         Spark.awaitInitialization();

@@ -4,6 +4,7 @@ import model.GameData;
 
 import java.util.ArrayList;
 
+
 public interface GameDAOInterface {
     void clear();
     void createGame(GameData game);
