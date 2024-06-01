@@ -35,7 +35,7 @@ public class MySQLAuthDAO implements AuthDAOInterface{
                 }
             }
         }
-        catch (Exception e){
+        catch (SQLException e){
             throw new RuntimeException(e);
         }
     }
@@ -45,10 +45,12 @@ public class MySQLAuthDAO implements AuthDAOInterface{
         try (Connection c = DatabaseManager.getConnection()) {
             try (var preparedStatement = c.prepareStatement("DELETE FROM auth WHERE authToken = ?")) {
                 preparedStatement.setString(1,authToken);
-                preparedStatement.executeQuery();
+                if(preparedStatement.executeUpdate() != 1) {
+                    throw new DataAccessException("Error: unauthorized");
+                };
             }
         }
-        catch (Exception e){
+        catch (SQLException e){
             throw new RuntimeException(e);
         }
 
