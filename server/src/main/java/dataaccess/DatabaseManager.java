@@ -37,39 +37,25 @@ public class DatabaseManager {
     public static void createDatabase() throws DataAccessException {
         try {
             var statement = "CREATE DATABASE IF NOT EXISTS " + DATABASE_NAME;
-            var tableStatement = """
-                USE chess;
-                DROP TABLE IF EXISTS users;
-                DROP TABLE IF EXISTS auth;
-                DROP TABLE IF EXISTS games;
-                CREATE TABLE users (
-                      username VARCHAR(255) NOT NULL PRIMARY KEY,
-                      password VARCHAR(255) NOT NULL,
-                      email VARCHAR(255) NOT NULL
-                  );
-                  CREATE TABLE auth (
-                      authToken VARCHAR(255) NOT NULL PRIMARY KEY,
-                      userName VARCHAR(255) NOT NULL
-                  );
-                  CREATE TABLE game (
-                      id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,
-                      whiteUsername VARCHAR(255),
-                      blackUsername VARCHAR(255),
-                      gameName VARCHAR(255) NOT NULL,
-                      game LONGTEXT NOT NULL
-                  );
-                """;
+            String[] tableCreationStatements = {
+                    "USE chess",
+                    "DROP TABLE IF EXISTS users",
+                    "DROP TABLE IF EXISTS auth",
+                    "DROP TABLE IF EXISTS games",
+                    "CREATE TABLE users (username VARCHAR(255) NOT NULL PRIMARY KEY, password VARCHAR(255) NOT NULL, email VARCHAR(255) NOT NULL)",
+                    "CREATE TABLE auth (authToken VARCHAR(255) NOT NULL PRIMARY KEY, userName VARCHAR(255) NOT NULL)",
+                    "CREATE TABLE games (id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT, whiteUsername VARCHAR(255), blackUsername VARCHAR(255), gameName VARCHAR(255) NOT NULL, game LONGTEXT NOT NULL)"
+            };
             var conn = DriverManager.getConnection(CONNECTION_URL, USER, PASSWORD);
             try (var preparedStatement = conn.prepareStatement(statement)) {
                 preparedStatement.executeUpdate();
 
                 System.out.println("Database created");
             }
-            try (var preparedStatement = conn.prepareStatement("Use chess")) {
-                preparedStatement.executeUpdate();
-            }
-            try (var preparedStatement = conn.prepareStatement(tableStatement)) {
-                preparedStatement.executeUpdate();
+            for (String tableStatement : tableCreationStatements) {
+                try (var preparedStatement = conn.prepareStatement(tableStatement)) {
+                    preparedStatement.executeUpdate();
+                }
             }
         } catch (SQLException e) {
             throw new DataAccessException(e.getMessage());
