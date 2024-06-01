@@ -10,7 +10,7 @@ public class MySQLUserDAO implements UserDAOInterface {
     @Override
     public void createUser(UserData user) {
         try (Connection c = DatabaseManager.getConnection()) {
-            try (var preparedStatement = c.prepareStatement("INSERT INTO users (username,passwoed,email ) VALUES (?, ?, ?)")) {
+            try (var preparedStatement = c.prepareStatement("INSERT INTO users (username,password,email ) VALUES (?, ?, ?)")) {
                 preparedStatement.setString(1, user.username());
                 preparedStatement.setString(2, user.password());
                 preparedStatement.setString(3, user.email());
@@ -26,7 +26,7 @@ public class MySQLUserDAO implements UserDAOInterface {
     @Override
     public UserData getUser(String username) throws DataAccessException {
         try (Connection c = DatabaseManager.getConnection()) {
-            try (var preparedStatement = c.prepareStatement("SELECT username,password,email FROM users WHERE username = ?")) {
+            try (var preparedStatement = c.prepareStatement("SELECT * FROM users WHERE username = ?")) {
                 preparedStatement.setString(1,username);
                 var rs = preparedStatement.executeQuery();
                 if (rs.next()) {

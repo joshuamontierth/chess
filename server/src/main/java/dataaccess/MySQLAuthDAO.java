@@ -24,7 +24,7 @@ public class MySQLAuthDAO implements AuthDAOInterface{
     @Override
     public AuthData getAuth(String authToken) throws DataAccessException {
         try (Connection c = DatabaseManager.getConnection()) {
-            try (var preparedStatement = c.prepareStatement("SELECT authToken, username FROM auth WHERE authToken = ?")) {
+            try (var preparedStatement = c.prepareStatement("SELECT * FROM auth WHERE authToken = ?")) {
                 preparedStatement.setString(1,authToken);
                 var rs = preparedStatement.executeQuery();
                 if (rs.next()) {
