@@ -6,13 +6,14 @@ import model.GameData;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 
 public class MySQLGameDAO implements GameDAOInterface{
     @Override
     public void clear() {
         try (Connection c = DatabaseManager.getConnection()) {
-            try (var preparedStatement = c.prepareStatement("DROP TABLE games;")) {
+            try (var preparedStatement = c.prepareStatement("DELETE FROM games;")) {
                 preparedStatement.executeUpdate();
             }
         }
@@ -24,7 +25,7 @@ public class MySQLGameDAO implements GameDAOInterface{
     @Override
     public int createGame(GameData game) {
         try (Connection c = DatabaseManager.getConnection()) {
-            try (var preparedStatement = c.prepareStatement("INSERT INTO games (whiteUsername, blackUsername, gameName, game) VALUES (?, ?, ?, ?);")) {
+            try (var preparedStatement = c.prepareStatement("INSERT INTO games (whiteUsername, blackUsername, gameName, game) VALUES (?, ?, ?, ?);", Statement.RETURN_GENERATED_KEYS)) {
                 preparedStatement.setString(1,game.whiteUsername());
                 preparedStatement.setString(2,game.blackUsername());
                 preparedStatement.setString(3,game.gameName());
@@ -81,7 +82,7 @@ public class MySQLGameDAO implements GameDAOInterface{
     public void updateGame(GameData game) throws DataAccessException {
 
         try (Connection c = DatabaseManager.getConnection()) {
-            try (var preparedStatement = c.prepareStatement("UPDATE games SET whiteUsername = ?, blackUsername = ?, gameName = ?, game = ? WHERE id = ?;")) {
+            try (var preparedStatement = c.prepareStatement("UPDATE games SET whiteUsername = ?, blackUsername = ?, gameName = ?, game = ? WHERE gameID = ?;")) {
                 preparedStatement.setString(1,game.whiteUsername());
                 preparedStatement.setString(2,game.blackUsername());
                 preparedStatement.setString(3,game.gameName());

@@ -3,6 +3,7 @@ package service;
 import dataaccess.*;
 import model.AuthData;
 import model.UserData;
+import org.mindrot.jbcrypt.BCrypt;
 import utilities.*;
 
 import java.util.UUID;
@@ -19,7 +20,7 @@ public class RegisterUserService {
 
         checkIfUserExists(req,userDAO);
 
-        userDAO.createUser(new UserData(req.username(), req.password(), req.email()));
+        userDAO.createUser(new UserData(req.username(), BCrypt.hashpw(req.password(), BCrypt.gensalt()), req.email()));
         String authToken = UUID.randomUUID().toString();
         new MySQLAuthDAO().createAuth(new AuthData(authToken,req.username()));
         return new RegisterUserResult(req.username(), authToken);

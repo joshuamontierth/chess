@@ -3,6 +3,7 @@ package service;
 import dataaccess.*;
 import model.AuthData;
 import model.UserData;
+import org.mindrot.jbcrypt.BCrypt;
 import utilities.*;
 
 import java.util.UUID;
@@ -16,7 +17,7 @@ public class LoginService {
         } catch (DataAccessException e) {
             throw new HTMLException("Error: unauthorized",401);
         }
-        if (!user.password().equals(req.password())) {
+        if (!BCrypt.checkpw(req.password(),user.password())) {
             throw new HTMLException("Error: unauthorized",401);
         }
         String authToken = UUID.randomUUID().toString();

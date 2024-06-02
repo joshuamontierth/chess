@@ -45,7 +45,7 @@ public class MySQLUserDAO implements UserDAOInterface {
     @Override
     public void clear() {
         try (Connection c = DatabaseManager.getConnection()) {
-            try (var preparedStatement = c.prepareStatement("DROP TABLE users;")) {
+            try (var preparedStatement = c.prepareStatement("DELETE FROM users;")) {
                 preparedStatement.executeUpdate();
             }
         }
