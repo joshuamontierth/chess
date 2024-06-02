@@ -55,7 +55,7 @@ public class DatabaseManager {
 
                 }
             }
-            System.out.println("tables created");
+            System.out.println("Tables created");
         } catch (SQLException e) {
             throw new DataAccessException(e.getMessage());
         }

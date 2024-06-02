@@ -1,8 +1,5 @@
 package service;
-import dataaccess.GameDAOInterface;
-import dataaccess.MemoryAuthDAO;
-import dataaccess.MemoryGameDAO;
-import dataaccess.MemoryUserDAO;
+import dataaccess.*;
 import org.junit.jupiter.api.*;
 
 import utilities.*;
@@ -14,13 +11,18 @@ public class ServerAPIUnitTests {
     int myGameID;
     @BeforeEach
     public void setup() throws HTMLException {
-        ClearService.clear(new ClearRequest());
         RegisterUserResult user1 = RegisterUserService.registerUser(new RegisterUserRequest("Clark","Kent","normalperson@email.com"));
         RegisterUserResult user2 = RegisterUserService.registerUser(new RegisterUserRequest("Super","Man","superhero@email.com"));
         authToken = LoginService.login(new LoginRequest("Super","Man")).authToken();
         myGameID = CreateGameService.createGame(new CreateGameRequest(authToken,"Truth, justice, and the american way")).gameID();
 
     }
+
+    @AfterEach
+    public void teardown() {
+        ClearService.clear(new ClearRequest());
+    }
+
 
     @Test
     public void registerUserSuccessTest() throws Exception {
@@ -63,9 +65,9 @@ public class ServerAPIUnitTests {
     @Test
     public void createGameSuccessTest() throws Exception {
         //normal behavior
-        CreateGameResult expected = new CreateGameResult(2);
+
         CreateGameResult actual = CreateGameService.createGame(new CreateGameRequest(authToken,"Justice League"));
-        Assertions.assertEquals(expected,actual);
+        Assertions.assertTrue(actual.gameID()>0);
     }
     @Test
     public void createGameFailTest() {
@@ -75,9 +77,10 @@ public class ServerAPIUnitTests {
     @Test
     public void joinGameSuccessTest() throws Exception {
         //normal behavior
-        JoinGameResult actual = JoinGameService.joinGame(new JoinGameRequest(authToken,"WHITE",myGameID));
-        GameDAOInterface gameDAO = new MemoryGameDAO();
-        String username = gameDAO.getGame(myGameID).whiteUsername();
+        int gameID = CreateGameService.createGame(new CreateGameRequest(authToken,"Lois Lane")).gameID();
+        JoinGameService.joinGame(new JoinGameRequest(authToken,"WHITE",gameID));
+        GameDAOInterface gameDAO = new MySQLGameDAO();
+        String username = gameDAO.getGame(gameID).whiteUsername();
         Assertions.assertEquals(username,"Super");
 
     }

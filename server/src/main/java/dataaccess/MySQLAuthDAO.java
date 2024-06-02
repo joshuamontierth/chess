@@ -3,7 +3,6 @@ package dataaccess;
 import model.AuthData;
 
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class MySQLAuthDAO implements AuthDAOInterface{
