@@ -13,16 +13,9 @@ public class CreateGameService extends Service {
         if (req.gameName() == null || req.gameName().isEmpty()) {
             throw new HTMLException("Error: Fill out all required fields", 400);
         }
-        GameDAOInterface gameDAO = new MemoryGameDAO();
-        ArrayList<GameData> games = gameDAO.listGames();
-        int newGameID = 1;
-        if (!games.isEmpty()) {
-            int prevGameID = games.getLast().gameID();
-            newGameID = prevGameID + 1;
-        }
-
-        GameData newGame = new GameData(newGameID,null,null,req.gameName(),new ChessGame());
-        gameDAO.createGame(newGame);
+        GameDAOInterface gameDAO = new MySQLGameDAO();
+        GameData newGame = new GameData(0,null,null,req.gameName(),new ChessGame());
+        int newGameID = gameDAO.createGame(newGame);
         return new CreateGameResult(newGameID);
     }
 }

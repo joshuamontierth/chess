@@ -6,11 +6,11 @@ import utilities.ClearResult;
 
 public class ClearService {
     public static ClearResult clear(ClearRequest req) {
-        AuthDAOInterface authDAO = new MemoryAuthDAO();
+        AuthDAOInterface authDAO = new MySQLAuthDAO();
         authDAO.clear();
-        GameDAOInterface gameDAO = new MemoryGameDAO();
+        GameDAOInterface gameDAO = new MySQLGameDAO();
         gameDAO.clear();
-        UserDAOInterface userDAO = new MemoryUserDAO();
+        UserDAOInterface userDAO = new MySQLUserDAO();
         userDAO.clear();
         return new ClearResult();
     }

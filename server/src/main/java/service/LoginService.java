@@ -9,7 +9,7 @@ import java.util.UUID;
 
 public class LoginService {
     public static LoginResult login(LoginRequest req) throws HTMLException {
-        UserDAOInterface userDAO = new MemoryUserDAO();
+        UserDAOInterface userDAO = new MySQLUserDAO();
         UserData user;
         try {
             user = userDAO.getUser(req.username());
@@ -20,7 +20,7 @@ public class LoginService {
             throw new HTMLException("Error: unauthorized",401);
         }
         String authToken = UUID.randomUUID().toString();
-        AuthDAOInterface authDAO = new MemoryAuthDAO();
+        AuthDAOInterface authDAO = new MySQLAuthDAO();
         authDAO.createAuth(new AuthData(authToken,req.username()));
         return new LoginResult(user.username(), authToken);
     }

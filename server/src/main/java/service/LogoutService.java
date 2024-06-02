@@ -5,7 +5,7 @@ import utilities.*;
 
 public class LogoutService extends Service {
     static public LogoutResult logout(LogoutRequest req) throws HTMLException {
-        AuthDAOInterface authDAO = new MemoryAuthDAO();
+        AuthDAOInterface authDAO = new MySQLAuthDAO();
 
         verifyUser(req.authToken());
         try {

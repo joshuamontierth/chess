@@ -1,13 +1,13 @@
 package service;
 
 import dataaccess.AuthDAOInterface;
-import dataaccess.MemoryAuthDAO;
+import dataaccess.MySQLAuthDAO;
 import model.AuthData;
 
 public class Service {
     static protected String verifyUser(String authToken) throws HTMLException {
         try {
-            AuthDAOInterface authDAO = new MemoryAuthDAO();
+            AuthDAOInterface authDAO = new MySQLAuthDAO();
             AuthData auth = authDAO.getAuth(authToken);
             return auth.username();
         }

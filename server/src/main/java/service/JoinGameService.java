@@ -2,7 +2,7 @@ package service;
 
 import dataaccess.DataAccessException;
 import dataaccess.GameDAOInterface;
-import dataaccess.MemoryGameDAO;
+import dataaccess.MySQLGameDAO;
 import model.GameData;
 import utilities.JoinGameRequest;
 import utilities.JoinGameResult;
@@ -10,7 +10,7 @@ import utilities.JoinGameResult;
 public class JoinGameService extends Service {
     public static JoinGameResult joinGame(JoinGameRequest req) throws HTMLException {
         String username = verifyUser(req.authToken());
-        GameDAOInterface gameDAO = new MemoryGameDAO();
+        GameDAOInterface gameDAO = new MySQLGameDAO();
         GameData game;
         if(req.playerColor() == null || req.gameID() == null) {
             throw new HTMLException("Error: Fill out all required fields", 400);

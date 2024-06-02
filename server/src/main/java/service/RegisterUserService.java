@@ -9,7 +9,7 @@ import java.util.UUID;
 
 public class RegisterUserService {
     public static RegisterUserResult registerUser(RegisterUserRequest req) throws HTMLException {
-        UserDAOInterface userDAO = new MemoryUserDAO();
+        UserDAOInterface userDAO = new MySQLUserDAO();
         if (req.username() == null || req.password() == null || req.email() == null) {
             throw new HTMLException("Error: Bad request", 400);
         }
@@ -21,7 +21,7 @@ public class RegisterUserService {
 
         userDAO.createUser(new UserData(req.username(), req.password(), req.email()));
         String authToken = UUID.randomUUID().toString();
-        new MemoryAuthDAO().createAuth(new AuthData(authToken,req.username()));
+        new MySQLAuthDAO().createAuth(new AuthData(authToken,req.username()));
         return new RegisterUserResult(req.username(), authToken);
     }
     private static void checkIfUserExists(RegisterUserRequest req, UserDAOInterface userDAO) throws HTMLException {

@@ -9,7 +9,7 @@ import java.util.Collection;
 public class ListGamesService extends Service{
     public static ListGamesResult listGames(ListGamesRequest req) throws HTMLException {
         verifyUser(req.authToken());
-        GameDAOInterface gameDAO = new MemoryGameDAO();
+        GameDAOInterface gameDAO = new MySQLGameDAO();
         Collection<GameData> gameList = gameDAO.listGames();
         return new ListGamesResult(gameList);
     }
