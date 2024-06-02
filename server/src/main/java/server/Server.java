@@ -10,12 +10,7 @@ import utilities.*;
 public class Server {
 
     public int run(int desiredPort) {
-        try {
-            DatabaseManager.createDatabase();
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
+
         Spark.port(desiredPort);
 
         Spark.staticFiles.location("web");
