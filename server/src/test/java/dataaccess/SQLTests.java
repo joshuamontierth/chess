@@ -1,6 +1,7 @@
 package dataaccess;
 
 
+import chess.ChessGame;
 import model.*;
 import org.junit.jupiter.api.*;
 
@@ -12,6 +13,8 @@ public class SQLTests {
     String username = "username";
     String password = "password";
     String email = "email";
+    String username2 = "username2";
+    String gameName = "gameName";
 
     @BeforeEach
     public void setup() throws Exception  {
@@ -175,6 +178,114 @@ public class SQLTests {
         Assertions.assertThrows(Exception.class, ()->userDAO.getUser("Tony"));
         Assertions.assertThrows(Exception.class, ()->userDAO.getUser("Peter"));
     }
+    @Test
+    public void createGamePositiveTest() throws Exception {
+        MySQLGameDAO gameDAO = new MySQLGameDAO();
+        GameData injectedGame = new GameData(0,username,null,gameName,new ChessGame());
+        int id = gameDAO.createGame(injectedGame);
+
+        try (Connection c = DatabaseManager.getConnection()) {
+            try (var preparedStatement = c.prepareStatement("SELECT * FROM games WHERE gameID = ?;")) {
+                preparedStatement.setInt(1,id);
+                var rs = preparedStatement.executeQuery();
+                if (rs.next()) {
+                    Assertions.assertEquals(username,rs.getString("whiteUsername"));
+                }
+                else {
+                    Assertions.fail();
+                }
+
+
+            }
+        }
+
+    }
+    @Test
+    public void createGameNegativeTest() {
+        MySQLGameDAO gameDAO = new MySQLGameDAO();
+        GameData injectedGame = new GameData(0,null,null,null,null);
+        Assertions.assertThrows(Exception.class, ()->gameDAO.createGame(injectedGame));
+
+    }
+    @Test
+    public void getGamePositiveTest() throws Exception{
+        MySQLGameDAO gameDAO = new MySQLGameDAO();
+        GameData injectedGame = new GameData(0,username,username2,gameName,new ChessGame());
+        int id = gameDAO.createGame(injectedGame);
+        GameData retrieved = gameDAO.getGame(id);
+
+        Assertions.assertEquals(injectedGame.gameName(),retrieved.gameName());
+
+
+
+    }
+    @Test
+    public void getGameNegativeTest() {
+        MySQLGameDAO gameDAO = new MySQLGameDAO();
+        Assertions.assertThrows(Exception.class, ()->gameDAO.getGame(0));
+
+    }
+    @Test
+    public void listGamesPositiveTest() throws Exception{
+        MySQLGameDAO gameDAO = new MySQLGameDAO();
+        gameDAO.createGame(new GameData(0,username, username2, "G",new ChessGame()));
+        gameDAO.createGame(new GameData(0,username, username2, "A",new ChessGame()));
+        gameDAO.createGame(new GameData(0,username, username2, "M",new ChessGame()));
+        gameDAO.createGame(new GameData(0,username, username2, "E",new ChessGame()));
+        var games = gameDAO.listGames();
+
+        Assertions.assertEquals(games.size(),4);
+
+
+
+    }
+    @Test
+    public void listGamesNegativeTest() {
+        MySQLGameDAO gameDAO = new MySQLGameDAO();
+        var games = gameDAO.listGames();
+        Assertions.assertEquals(games.size(),0);
+
+
+    }
+    @Test
+    public void updateGamePositiveTest() throws Exception{
+        MySQLGameDAO gameDAO = new MySQLGameDAO();
+        GameData originalGame = new GameData(1,username, username2, "This is an awesome game",new ChessGame());
+        int id = gameDAO.createGame(originalGame);
+        GameData updatedGame = new GameData(id,username, "Superman", "This is an awesome game",new ChessGame());
+        gameDAO.updateGame(updatedGame);
+        GameData retrieved = gameDAO.getGame(id);
+        Assertions.assertEquals("Superman",retrieved.blackUsername());
+
+
+
+    }
+    @Test
+    public void updateGameNegativeTest() {
+        MySQLGameDAO gameDAO = new MySQLGameDAO();
+        Assertions.assertThrows(Exception.class, ()->gameDAO.updateGame(null));
+
+    }
+
+    @Test
+    public void clearGamePositiveTest() {
+        MySQLGameDAO gameDAO = new MySQLGameDAO();
+        int id1 = gameDAO.createGame(new GameData(1,null, null, "G",new ChessGame()));
+        int id2 = gameDAO.createGame(new GameData(2,null, null, "A",new ChessGame()));
+        int id3 = gameDAO.createGame(new GameData(3,null, null, "M",new ChessGame()));
+        int id4 = gameDAO.createGame(new GameData(4,null, null, "E",new ChessGame()));
+
+        gameDAO.clear();
+        Assertions.assertThrows(Exception.class, ()->gameDAO.getGame(id1));
+        Assertions.assertThrows(Exception.class, ()->gameDAO.getGame(id2));
+        Assertions.assertThrows(Exception.class, ()->gameDAO.getGame(id3));
+        Assertions.assertThrows(Exception.class, ()->gameDAO.getGame(id4));
+    }
+
+
 
 
 }
+
+
+
