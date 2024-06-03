@@ -31,6 +31,8 @@ public class DatabaseManager {
         }
     }
 
+
+
     /**
      * Creates the database if it does not already exist.
      */
@@ -38,7 +40,7 @@ public class DatabaseManager {
         try {
             var statement = "CREATE DATABASE IF NOT EXISTS " + DATABASE_NAME;
             String[] tableCreationStatements = {
-                    "USE chess;",
+
                     "CREATE TABLE IF NOT EXISTS users (username VARCHAR(255) NOT NULL PRIMARY KEY, password VARCHAR(255) NOT NULL, email VARCHAR(255) NOT NULL);",
                     "CREATE TABLE IF NOT EXISTS auth (authToken VARCHAR(255) NOT NULL PRIMARY KEY, userName VARCHAR(255) NOT NULL);",
                     "CREATE TABLE IF NOT EXISTS games (gameID INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT, whiteUsername VARCHAR(255), blackUsername VARCHAR(255), gameName VARCHAR(255) NOT NULL, game LONGTEXT NOT NULL);"
