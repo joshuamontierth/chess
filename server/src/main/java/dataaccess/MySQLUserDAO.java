@@ -7,7 +7,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 public class MySQLUserDAO implements UserDAOInterface {
-    MySQLUserDAO() {
+    public MySQLUserDAO() {
         try {
             DatabaseManager.createDatabase();
         }

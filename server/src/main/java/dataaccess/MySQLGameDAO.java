@@ -10,7 +10,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 public class MySQLGameDAO implements GameDAOInterface{
-    MySQLGameDAO() {
+    public MySQLGameDAO() {
         try {
             DatabaseManager.createDatabase();
         }
