@@ -7,6 +7,15 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 public class MySQLUserDAO implements UserDAOInterface {
+    MySQLUserDAO() {
+        try {
+            DatabaseManager.createDatabase();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public void createUser(UserData user) {
         try (Connection c = DatabaseManager.getConnection()) {
