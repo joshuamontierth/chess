@@ -1,6 +1,7 @@
 package ui;
 
 import com.google.gson.Gson;
+import service.HTMLException;
 
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -8,11 +9,10 @@ import java.net.URL;
 
 public class ClientConnector {
 
-    public String post(String urlString,Object request,String authToken) throws IOException {
+    public String post(String urlString,Object request,String authToken) throws Exception {
         URL url = new URL(urlString);
 
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-
         connection.setReadTimeout(5000);
         connection.setRequestMethod("POST");
 
@@ -39,7 +39,7 @@ public class ClientConnector {
         return processResult(connection);
     }
 
-    public String get(String urlString,Object request,String authToken) throws IOException {
+    public String get(String urlString,Object request,String authToken) throws Exception {
         URL url = new URL(urlString);
 
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -56,7 +56,7 @@ public class ClientConnector {
         return processResult(connection);
     }
 
-    public void delete(String urlString,Object request,String authToken) throws IOException {
+    public void delete(String urlString,Object request,String authToken) throws Exception {
         URL url = new URL(urlString);
 
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -73,7 +73,7 @@ public class ClientConnector {
 
 
 
-    private String processResult(HttpURLConnection connection) throws IOException {
+    private String processResult(HttpURLConnection connection) throws Exception {
         if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
             InputStream responseBody = connection.getInputStream();
             InputStreamReader reader = new InputStreamReader(responseBody);
@@ -81,8 +81,7 @@ public class ClientConnector {
             return bufferedReader.readLine();
 
         } else {
-            InputStream responseBody = connection.getErrorStream();
-            throw new IOException(connection.getResponseMessage() + ": " + connection.getResponseCode());
+            throw new HTMLException(connection.getResponseMessage(),connection.getResponseCode());
 
         }
     }
