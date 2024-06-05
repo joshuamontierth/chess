@@ -105,10 +105,6 @@ public class Client {
                     break;
                 case 5:
                     logout();
-                    firstPostLogin = true;
-                    firstPreLogin = true;
-                    authToken = null;
-                    System.out.println("Logged out successfully\n");
                     break;
                 case 6:
                     printPostloginOptions();
@@ -128,10 +124,21 @@ public class Client {
     }
 
     private void createGame() {
+
     }
     private void joinGame(boolean observerMode) {
     }
     private void logout() {
+        try {
+            server.logout(authToken);
+            firstPostLogin = true;
+            firstPreLogin = true;
+            authToken = null;
+            System.out.println("Logged out successfully\n");
+        }
+        catch (HTMLException e) {
+            System.out.println("Logout unsuccessful, please try again: " + e.getMessage());
+        }
     }
 
 

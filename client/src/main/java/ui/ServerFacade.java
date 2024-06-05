@@ -16,7 +16,7 @@ public class ServerFacade {
     public String login(String username, String password) throws HTMLException {
         LoginRequest req = new LoginRequest(username, password);
         String url = urlStub + "/session";
-        String responseString = interfaceWithConnector(url,req,null);
+        String responseString = interfaceWithConnector(url,req,null, "post");
         Gson gson = new Gson();
         LoginResult res = gson.fromJson(responseString,LoginResult.class);
         return res.authToken();
@@ -26,14 +26,33 @@ public class ServerFacade {
         String url = urlStub + "/user";
 
         Gson gson = new Gson();
-        String responseString = interfaceWithConnector(url,req,null);
+        String responseString = interfaceWithConnector(url,req,null, "post");
         RegisterUserResult res = gson.fromJson(responseString,RegisterUserResult.class);
         return res.authToken();
     }
-    private String interfaceWithConnector(String url, Object req, String authToken) throws HTMLException {
-        String responseString;
+
+    public void logout(String authToken) throws HTMLException {
+        String url = urlStub + "/session";
+        interfaceWithConnector(url,null,authToken, "delete");
+    }
+    private String interfaceWithConnector(String url, Object req, String authToken, String method) throws HTMLException {
+        String responseString = null;
+
         try {
-            responseString = clientConnector.post(url, req, authToken);
+            switch (method) {
+                case "post":
+                    responseString = clientConnector.post(url, req, authToken);
+                    break;
+
+                case "delete":
+                    clientConnector.delete(url, req, authToken);
+                    break;
+                case "get":
+                    responseString = clientConnector.get(url, req, authToken);
+                    break;
+                default:
+                    throw new RuntimeException("Method not supported");
+            }
         }
         catch (Exception e) {
             if (e instanceof HTMLException) {
