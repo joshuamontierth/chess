@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 
 import java.io.*;
 import java.net.HttpURLConnection;
+import java.net.ProtocolException;
 import java.net.URL;
 
 public class ClientConnector {
@@ -49,6 +50,21 @@ public class ClientConnector {
 
         connection.connect();
         return processResult(connection);
+    }
+
+    public void delete(String urlString,Object request,String authToken) throws IOException {
+        URL url = new URL(urlString);
+
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+        connection.setReadTimeout(5000);
+        connection.setRequestMethod("DELETE");
+        if (authToken != null) {
+            connection.addRequestProperty("Authorization", authToken);
+        }
+
+        connection.connect();
+        processResult(connection);
     }
 
 
