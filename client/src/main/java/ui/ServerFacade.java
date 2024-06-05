@@ -64,4 +64,13 @@ public class ServerFacade {
         }
         return responseString;
     }
+    public void createGame(String gameName, String authToken) throws HTMLException {
+        String url = urlStub + "/game";
+        CreateGameRequest req = new CreateGameRequest(authToken, gameName);
+        Gson gson = new Gson();
+        String responseString = interfaceWithConnector(url,req,authToken, "post");
+        CreateGameResult res = gson.fromJson(responseString,CreateGameResult.class);
+        System.out.println(res.gameID());
+
+    }
 }

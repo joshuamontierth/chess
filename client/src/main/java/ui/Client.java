@@ -56,11 +56,9 @@ public class Client {
             switch (option) {
                 case 1:
                     registerUser();
-                    System.out.println("User successfully registered");
                     break;
                 case 2:
                     loginUser();
-                    System.out.println("Login successful");
                     break;
                 case 3:
                     exit(0);
@@ -124,7 +122,15 @@ public class Client {
     }
 
     private void createGame() {
-
+        System.out.println("Enter a name for the new game:");
+        Scanner scanner = new Scanner(System.in);
+        String gameName = scanner.nextLine();
+        try {
+            server.createGame(gameName, authToken);
+        }
+        catch (HTMLException e) {
+            System.out.println("Bad request: " + e.getMessage());
+        }
     }
     private void joinGame(boolean observerMode) {
     }
@@ -151,6 +157,7 @@ public class Client {
         String password = scanner.nextLine();
         try {
             authToken = server.login(username, password);
+            System.out.println("Login successful");
         }
         catch (HTMLException e) {
             System.out.println("Bad request: " + e.getMessage());
@@ -167,6 +174,7 @@ public class Client {
         String email = scanner.nextLine();
         try {
             authToken = server.register(username, password,email);
+            System.out.println("User successfully registered");
         }
         catch (HTMLException e) {
             if (e.getErrorCode() == 403) {
