@@ -3,12 +3,12 @@ package ui;
 import com.google.gson.Gson;
 import utilities.*;
 
-public class SeverFacade {
-    String urlStub;
-    ClientConnector clientConnector;
+public class ServerFacade {
+    private final String urlStub;
+    private ClientConnector clientConnector;
 
-    public SeverFacade(String hostname, int port) {
-        urlStub =  "http"+ hostname + port;
+    public ServerFacade(String hostname, int port) {
+        urlStub =  "http://"+ hostname + ":" + port;
         clientConnector = new ClientConnector();
 
     }

@@ -5,11 +5,13 @@ import java.util.Scanner;
 import static java.lang.System.exit;
 
 public class Client {
-    boolean firstPreLogin = true;
-    String authToken = null;
+    private boolean firstPreLogin = true;
+    private String authToken = null;
+    private ServerFacade server;
 
 
-    public void run() {
+    public void run(String hostname, int port) {
+        server = new ServerFacade(hostname, port);
         System.out.println("Welcome to 240 Chess");
 
         while(authToken == null) {
@@ -34,28 +36,25 @@ public class Client {
         switch(option) {
             case 1:
                 RegisterUser();
+                break;
             case 2:
                 LoginUser();
+                break;
             case 3:
                 exit(0);
             case 4:
                 printPreloginOptions();
         }
     }
-
     private void LoginUser() {
         System.out.println("Please enter your username:");
         Scanner scanner = new Scanner(System.in);
         String username = scanner.nextLine();
         System.out.println("Please enter your password:");
         String password = scanner.nextLine();
-
-        new
-
-
+        authToken = server.login(username, password);
 
     }
-
     private void RegisterUser() {
         System.out.println("Please enter your username:");
         Scanner scanner = new Scanner(System.in);
@@ -64,6 +63,6 @@ public class Client {
         String password = scanner.nextLine();
         System.out.println("Please enter your email:");
         String email = scanner.nextLine();
-
+        authToken = server.register(username, password,email);
     }
 }

@@ -34,6 +34,7 @@ public class Server {
         });
         Spark.post("/session", (req, res) -> {
             try {
+
                 return serialize(LoginService.login(gson.fromJson(req.body(), LoginRequest.class)));
             }
             catch (HTMLException e) {

@@ -17,20 +17,25 @@ public class ClientConnector {
         connection.setRequestMethod("POST");
 
 
-        connection.addRequestProperty("Accept", "text/html");
+        connection.addRequestProperty("Accept", "application/json");
+        connection.addRequestProperty("Content-Type", "application/json");
+
         if (authToken != null) {
             connection.addRequestProperty("Authorization", authToken);
         }
         connection.setDoOutput(true);
 
-        connection.connect();
+
 
         try(OutputStream requestBody = connection.getOutputStream()) {
             Gson gson = new Gson();
             OutputStreamWriter writer = new OutputStreamWriter(requestBody);
+
             writer.write(gson.toJson(request));
+            writer.flush();
 
         }
+        connection.connect();
         return processResult(connection);
     }
 
@@ -72,11 +77,12 @@ public class ClientConnector {
         if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
             InputStream responseBody = connection.getInputStream();
             InputStreamReader reader = new InputStreamReader(responseBody);
-            return reader.toString();
+            BufferedReader bufferedReader = new BufferedReader(reader);
+            return bufferedReader.readLine();
 
         } else {
             InputStream responseBody = connection.getErrorStream();
-            throw new IOException(connection.getResponseMessage());
+            throw new IOException(connection.getResponseMessage() + ": " + connection.getResponseCode());
 
         }
     }
