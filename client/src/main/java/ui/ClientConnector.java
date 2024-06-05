@@ -1,41 +1,46 @@
 package ui;
 
+import com.google.gson.Gson;
+
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class ClientConnector {
 
-    public void get(String urlString,) throws IOException {
+    public String post(String urlString,Object request,String authToken) throws IOException {
         URL url = new URL(urlString);
 
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
         connection.setReadTimeout(5000);
-        connection.setRequestMethod("GET");
+        connection.setRequestMethod("POST");
 
-        // Set HTTP request headers, if necessary
-        // connection.addRequestProperty("Accept", "text/html");
-        // connection.addRequestProperty("Authorization", "fjaklc8sdfjklakl");
+
+        connection.addRequestProperty("Accept", "text/html");
+        if (authToken != null) {
+            connection.addRequestProperty("Authorization", authToken);
+        }
+        connection.setDoOutput(true);
 
         connection.connect();
 
+        try(OutputStream requestBody = connection.getOutputStream()) {
+            Gson gson = new Gson();
+            requestBody.write(gson.toJson(request).getBytes());
+
+        }
+
         if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
-            // Get HTTP response headers, if necessary
-            // Map<String, List<String>> headers = connection.getHeaderFields();
-
-            // OR
-
-            //connection.getHeaderField("Content-Length");
-
             InputStream responseBody = connection.getInputStream();
-            // Read and process response body from InputStream ...
-        } else {
-            // SERVER RETURNED AN HTTP ERROR
 
+
+        } else {
             InputStream responseBody = connection.getErrorStream();
-            // Read and process error response body from InputStream ...
+            throw new IOException(connection.getResponseMessage());
+
         }
     }
 }
