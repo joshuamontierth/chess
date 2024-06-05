@@ -50,9 +50,20 @@ public class Client {
         System.out.println("Please enter your password:");
         String password = scanner.nextLine();
 
+        new
+
 
 
     }
 
-    private void RegisterUser() {}
+    private void RegisterUser() {
+        System.out.println("Please enter your username:");
+        Scanner scanner = new Scanner(System.in);
+        String username = scanner.nextLine();
+        System.out.println("Please enter your password:");
+        String password = scanner.nextLine();
+        System.out.println("Please enter your email:");
+        String email = scanner.nextLine();
+
+    }
 }
