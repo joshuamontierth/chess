@@ -3,7 +3,13 @@ package ui;
 import com.google.gson.Gson;
 import model.GameData;
 import utilities.HTMLException;
-import utilities.*;
+import utilities.request.CreateGameRequest;
+import utilities.request.JoinGameRequest;
+import utilities.request.LoginRequest;
+import utilities.request.RegisterUserRequest;
+import utilities.result.ListGamesResult;
+import utilities.result.LoginResult;
+import utilities.result.RegisterUserResult;
 
 import java.util.Collection;
 

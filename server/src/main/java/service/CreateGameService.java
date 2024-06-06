@@ -4,6 +4,8 @@ import chess.ChessGame;
 import model.GameData;
 import dataaccess.*;
 import utilities.*;
+import utilities.request.CreateGameRequest;
+import utilities.result.CreateGameResult;
 
 public class CreateGameService extends Service {
     public static CreateGameResult createGame(CreateGameRequest req) throws HTMLException {

@@ -2,6 +2,8 @@ package service;
 
 import dataaccess.*;
 import utilities.*;
+import utilities.request.LogoutRequest;
+import utilities.result.LogoutResult;
 
 public class LogoutService extends Service {
     static public LogoutResult logout(LogoutRequest req) throws HTMLException {

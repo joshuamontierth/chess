@@ -3,6 +3,11 @@ import dataaccess.*;
 import org.junit.jupiter.api.*;
 
 import utilities.*;
+import utilities.request.*;
+import utilities.result.CreateGameResult;
+import utilities.result.LoginResult;
+import utilities.result.LogoutResult;
+import utilities.result.RegisterUserResult;
 
 
 public class ServerAPIUnitTests {

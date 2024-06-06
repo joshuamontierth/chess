@@ -5,8 +5,8 @@ import dataaccess.GameDAOInterface;
 import dataaccess.MySQLGameDAO;
 import model.GameData;
 import utilities.HTMLException;
-import utilities.JoinGameRequest;
-import utilities.JoinGameResult;
+import utilities.request.JoinGameRequest;
+import utilities.result.JoinGameResult;
 
 public class JoinGameService extends Service {
     public static JoinGameResult joinGame(JoinGameRequest req) throws HTMLException {

@@ -5,6 +5,8 @@ import model.AuthData;
 import model.UserData;
 import org.mindrot.jbcrypt.BCrypt;
 import utilities.*;
+import utilities.request.RegisterUserRequest;
+import utilities.result.RegisterUserResult;
 
 import java.util.UUID;
 

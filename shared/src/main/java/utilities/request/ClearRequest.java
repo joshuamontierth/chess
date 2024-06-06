@@ -1,3 +1,3 @@
-package utilities;
+package utilities.request;
 
 public record ClearRequest() {}

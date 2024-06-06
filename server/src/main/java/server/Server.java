@@ -6,6 +6,7 @@ import dataaccess.DatabaseManager;
 import service.*;
 import spark.*;
 import utilities.*;
+import utilities.request.*;
 
 public class Server {
 

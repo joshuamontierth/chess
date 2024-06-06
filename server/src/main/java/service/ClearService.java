@@ -1,8 +1,8 @@
 package service;
 
 import dataaccess.*;
-import utilities.ClearRequest;
-import utilities.ClearResult;
+import utilities.request.ClearRequest;
+import utilities.result.ClearResult;
 
 public class ClearService {
     public static ClearResult clear(ClearRequest req) {

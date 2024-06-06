@@ -3,6 +3,8 @@ package service;
 import dataaccess.*;
 import model.GameData;
 import utilities.*;
+import utilities.request.ListGamesRequest;
+import utilities.result.ListGamesResult;
 
 import java.util.Collection;
 
