@@ -106,6 +106,10 @@ public class ChessBoard implements Cloneable {
         addPiece(new ChessPosition(8,5),new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KING));
     }
 
+    public ChessPiece[][] getBoard() {
+        return board;
+    }
+
     public String toString() {
         StringBuilder sb = new StringBuilder();
         for (int i = 7; i >= 0; i--) {

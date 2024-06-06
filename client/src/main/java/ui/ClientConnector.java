@@ -20,26 +20,10 @@ public class ClientConnector {
         connection.addRequestProperty("Accept", "application/json");
         connection.addRequestProperty("Content-Type", "application/json");
 
-        if (authToken != null) {
-            connection.addRequestProperty("Authorization", authToken);
-        }
-        connection.setDoOutput(true);
-
-
-
-        try(OutputStream requestBody = connection.getOutputStream()) {
-            Gson gson = new Gson();
-            OutputStreamWriter writer = new OutputStreamWriter(requestBody);
-
-            writer.write(gson.toJson(request));
-            writer.flush();
-
-        }
-        connection.connect();
+        setOutput(request, authToken, connection);
         return processResult(connection);
     }
-
-    public String get(String urlString,Object request,String authToken) throws Exception {
+    public String get(String urlString, String authToken) throws Exception {
         URL url = new URL(urlString);
 
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -55,7 +39,6 @@ public class ClientConnector {
         connection.connect();
         return processResult(connection);
     }
-
     public void delete(String urlString, String authToken) throws Exception {
         URL url = new URL(urlString);
 
@@ -70,9 +53,33 @@ public class ClientConnector {
         connection.connect();
         processResult(connection);
     }
+    public void put(String urlString, Object request, String authToken) throws Exception {
+        URL url = new URL(urlString);
 
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
+        connection.setReadTimeout(5000);
+        connection.setRequestMethod("PUT");
+        setOutput(request, authToken, connection);
+        processResult(connection);
+    }
 
+    private void setOutput(Object request, String authToken, HttpURLConnection connection) throws IOException {
+        if (authToken != null) {
+            connection.addRequestProperty("Authorization", authToken);
+        }
+        connection.setDoOutput(true);
+
+        try(OutputStream requestBody = connection.getOutputStream()) {
+            Gson gson = new Gson();
+            OutputStreamWriter writer = new OutputStreamWriter(requestBody);
+
+            writer.write(gson.toJson(request));
+            writer.flush();
+
+        }
+        connection.connect();
+    }
     private String processResult(HttpURLConnection connection) throws Exception {
         if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
             InputStream responseBody = connection.getInputStream();
@@ -85,27 +92,4 @@ public class ClientConnector {
 
         }
     }
-
-    public void put(String urlString, Object request, String authToken) throws Exception {
-        URL url = new URL(urlString);
-
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-
-        connection.setReadTimeout(5000);
-        connection.setRequestMethod("PUT");
-        if (authToken != null) {
-            connection.addRequestProperty("Authorization", authToken);
-        }
-        connection.setDoOutput(true);
-        try(OutputStream requestBody = connection.getOutputStream()) {
-            Gson gson = new Gson();
-            OutputStreamWriter writer = new OutputStreamWriter(requestBody);
-
-            writer.write(gson.toJson(request));
-            writer.flush();
-
-        }
-        connection.connect();
-        processResult(connection);
     }
-}

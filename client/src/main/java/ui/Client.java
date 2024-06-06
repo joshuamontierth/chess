@@ -2,12 +2,10 @@ package ui;
 
 import model.GameData;
 import service.HTMLException;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.InputMismatchException;
 import java.util.Scanner;
-
 import static java.lang.System.exit;
 
 public class Client {
@@ -15,7 +13,8 @@ public class Client {
     private boolean firstPostLogin = true;
     private String authToken = null;
     private ServerFacade server;
-    HashMap<Integer,Integer> gameMap = new HashMap<Integer,Integer>();
+    private HashMap<Integer,Integer> gameMap = new HashMap<Integer,Integer>();
+    private GameData gameData = null;
 
 
     public void run(String hostname, int port) {
@@ -30,6 +29,7 @@ public class Client {
 
         }
     }
+
     private void printPreloginOptions() {
         System.out.println("1. Register");
         System.out.println("2. Login");
@@ -37,7 +37,6 @@ public class Client {
         System.out.println("4. Help");
         System.out.println("Please select an option");
     }
-
     private void printPostloginOptions() {
         System.out.println("1. Create Game");
         System.out.println("2. List Games");
@@ -120,16 +119,17 @@ public class Client {
 
     }
 
-    private void listGames() {
+    private Collection<GameData> listGames() {
         try {
             Collection<GameData> games = server.listGames(authToken);
             printGameList(games);
+            return games;
         }
         catch (HTMLException e) {
             System.out.println("Bad request: " + e.getMessage());
+            return null;
         }
     }
-
     private void createGame() {
         System.out.println("Enter a name for the new game:");
         Scanner scanner = new Scanner(System.in);
@@ -143,6 +143,7 @@ public class Client {
         }
     }
     private void joinGame(boolean observerMode) {
+        var games = listGames();
         System.out.println("Select a game to join:");
         Scanner scanner = new Scanner(System.in);
         int gameSelect = 0;
@@ -178,6 +179,13 @@ public class Client {
                 else {
                     System.out.println("Game joined as observer");
                 }
+                if (games != null) {
+                    for (var game : games) {
+                        if (game.gameID() == gameSelect) {
+                            gameData = game;
+                        }
+                    }
+                }
             }
             catch (HTMLException e) {
                 if (e.getErrorCode() == 403) {
@@ -202,9 +210,6 @@ public class Client {
             System.out.println("Logout unsuccessful, please try again: " + e.getMessage());
         }
     }
-
-
-
     private void loginUser() {
         System.out.println("Please enter your username:");
         Scanner scanner = new Scanner(System.in);

@@ -9,11 +9,10 @@ import java.util.Collection;
 
 public class ServerFacade {
     private final String urlStub;
-    private ClientConnector clientConnector;
+    private final ClientConnector clientConnector = new ClientConnector();
 
     public ServerFacade(String hostname, int port) {
         urlStub =  "http://"+ hostname + ":" + port;
-        clientConnector = new ClientConnector();
     }
 
     public String login(String username, String password) throws HTMLException {
@@ -33,52 +32,16 @@ public class ServerFacade {
         RegisterUserResult res = gson.fromJson(responseString,RegisterUserResult.class);
         return res.authToken();
     }
-
     public void logout(String authToken) throws HTMLException {
         String url = urlStub + "/session";
         interfaceWithConnector(url,null,authToken, "delete");
     }
-    private String interfaceWithConnector(String url, Object req, String authToken, String method) throws HTMLException {
-        String responseString = null;
-
-        try {
-            switch (method) {
-                case "post":
-                    responseString = clientConnector.post(url, req, authToken);
-                    break;
-
-                case "delete":
-                    clientConnector.delete(url, authToken);
-                    break;
-                case "get":
-                    responseString = clientConnector.get(url, req, authToken);
-                    break;
-                case "put":
-                    clientConnector.put(url, req, authToken);
-                    break;
-                default:
-                    throw new RuntimeException("Method not supported");
-            }
-        }
-        catch (Exception e) {
-            if (e instanceof HTMLException) {
-                throw (HTMLException) e;
-            }
-            else {
-                throw new RuntimeException(e.getMessage());
-            }
-        }
-        return responseString;
-    }
     public void createGame(String gameName, String authToken) throws HTMLException {
         String url = urlStub + "/game";
         CreateGameRequest req = new CreateGameRequest(authToken, gameName);
-        Gson gson = new Gson();
-        String responseString = interfaceWithConnector(url,req,authToken, "post");
-        CreateGameResult res = gson.fromJson(responseString,CreateGameResult.class);
+        interfaceWithConnector(url,req,authToken, "post");
 
     }
-
     public Collection<GameData> listGames(String authToken) throws HTMLException {
         String url = urlStub + "/game";
         Gson gson = new Gson();
@@ -99,4 +62,38 @@ public class ServerFacade {
         JoinGameRequest req = new JoinGameRequest(authToken,colorString,gameID);
         interfaceWithConnector(url,req,authToken, "put");
     }
+
+    private String interfaceWithConnector(String url, Object req, String authToken, String method) throws HTMLException {
+        String responseString = null;
+
+        try {
+            switch (method) {
+                case "post":
+                    responseString = clientConnector.post(url, req, authToken);
+                    break;
+
+                case "delete":
+                    clientConnector.delete(url, authToken);
+                    break;
+                case "get":
+                    responseString = clientConnector.get(url, authToken);
+                    break;
+                case "put":
+                    clientConnector.put(url, req, authToken);
+                    break;
+                default:
+                    throw new RuntimeException("Method not supported");
+            }
+        }
+        catch (Exception e) {
+            if (e instanceof HTMLException) {
+                throw (HTMLException) e;
+            }
+            else {
+                throw new RuntimeException(e.getMessage());
+            }
+        }
+        return responseString;
+    }
+
 }
