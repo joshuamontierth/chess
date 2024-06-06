@@ -99,11 +99,9 @@ public class Client {
                     break;
                 case 3:
                     joinGame(false);
-                    System.out.println("Game joined");
                     break;
                 case 4:
                     joinGame(true);
-                    System.out.println("Game joined as observer");
                     break;
                 case 5:
                     logout();
@@ -159,20 +157,27 @@ public class Client {
             System.out.println("Invalid input, please enter a valid game number");
         }
         else {
-            System.out.println("Select 1 for white or 2 for black:");
             int colorSelect = 0;
-            try {
-                colorSelect = scanner.nextInt();
-            }
-            catch (InputMismatchException e) {
-                System.out.println("Invalid input, Select 1 for white or 2 for black:");
-            }
-            if (colorSelect != 1 && colorSelect != 2) {
-                System.out.println("Invalid input, Select 1 for white or 2 for black:");
+            if (!observerMode) {
+                System.out.println("Select 1 for white or 2 for black:");
+
+                try {
+                    colorSelect = scanner.nextInt();
+                } catch (InputMismatchException e) {
+                    System.out.println("Invalid input, Select 1 for white or 2 for black:");
+                }
+                if (colorSelect != 1 && colorSelect != 2) {
+                    System.out.println("Invalid input, Select 1 for white or 2 for black:");
+                }
             }
             try {
                 server.joinGame(gameSelect, colorSelect, authToken);
-                System.out.println("Game joined");
+                if (colorSelect != 0) {
+                    System.out.println("Game joined");
+                }
+                else {
+                    System.out.println("Game joined as observer");
+                }
             }
             catch (HTMLException e) {
                 if (e.getErrorCode() == 403) {

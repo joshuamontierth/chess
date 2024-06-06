@@ -56,7 +56,7 @@ public class ClientConnector {
         return processResult(connection);
     }
 
-    public void delete(String urlString,Object request,String authToken) throws Exception {
+    public void delete(String urlString, String authToken) throws Exception {
         URL url = new URL(urlString);
 
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -84,5 +84,28 @@ public class ClientConnector {
             throw new HTMLException(connection.getResponseMessage(),connection.getResponseCode());
 
         }
+    }
+
+    public void put(String urlString, Object request, String authToken) throws Exception {
+        URL url = new URL(urlString);
+
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+        connection.setReadTimeout(5000);
+        connection.setRequestMethod("PUT");
+        if (authToken != null) {
+            connection.addRequestProperty("Authorization", authToken);
+        }
+        connection.setDoOutput(true);
+        try(OutputStream requestBody = connection.getOutputStream()) {
+            Gson gson = new Gson();
+            OutputStreamWriter writer = new OutputStreamWriter(requestBody);
+
+            writer.write(gson.toJson(request));
+            writer.flush();
+
+        }
+        connection.connect();
+        processResult(connection);
     }
 }

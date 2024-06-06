@@ -48,10 +48,13 @@ public class ServerFacade {
                     break;
 
                 case "delete":
-                    clientConnector.delete(url, req, authToken);
+                    clientConnector.delete(url, authToken);
                     break;
                 case "get":
                     responseString = clientConnector.get(url, req, authToken);
+                    break;
+                case "put":
+                    clientConnector.put(url, req, authToken);
                     break;
                 default:
                     throw new RuntimeException("Method not supported");
@@ -86,9 +89,12 @@ public class ServerFacade {
     }
     public void joinGame(int gameID, int colorSelect, String authToken) throws HTMLException {
         String url = urlStub + "/game";
-        String colorString = "BLACK";
+        String colorString = null;
         if (colorSelect == 1) {
             colorString = "WHITE";
+        }
+        else if (colorSelect == 2) {
+            colorString = "BLACK";
         }
         JoinGameRequest req = new JoinGameRequest(authToken,colorString,gameID);
         interfaceWithConnector(url,req,authToken, "put");
