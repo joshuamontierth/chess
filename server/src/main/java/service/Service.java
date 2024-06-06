@@ -3,6 +3,7 @@ package service;
 import dataaccess.AuthDAOInterface;
 import dataaccess.MySQLAuthDAO;
 import model.AuthData;
+import utilities.HTMLException;
 
 public class Service {
     static protected String verifyUser(String authToken) throws HTMLException {

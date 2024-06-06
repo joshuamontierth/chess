@@ -1,7 +1,7 @@
 package ui;
 
 import model.GameData;
-import service.HTMLException;
+import utilities.HTMLException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.InputMismatchException;
@@ -185,6 +185,10 @@ public class Client {
                             gameData = game;
                         }
                     }
+                    DrawBoard boardDrawer = new DrawBoard(gameData.game().getBoard().getBoard());
+                    boardDrawer.drawBoard(true);
+                    System.out.println();
+                    boardDrawer.drawBoard(false);
                 }
             }
             catch (HTMLException e) {

@@ -3,7 +3,7 @@ package ui;
 import chess.*;
 
 public class DrawBoard {
-    ChessPiece[][] board;
+    private final ChessPiece[][] board;
     public DrawBoard(ChessPiece[][] board) {
         this.board = board;
     }
@@ -16,16 +16,6 @@ public class DrawBoard {
             case ROOK -> "R";
             case PAWN -> "P";
         };
-    }
-    public static void main(String[] args) {
-        ChessBoard chessBoard = new ChessBoard();
-        chessBoard.resetBoard();
-        DrawBoard drawBoard = new DrawBoard(chessBoard.getBoard());
-
-        drawBoard.drawBoard(true);
-        System.out.println();
-        drawBoard.drawBoard(false);
-
     }
     private void drawSquare(String squareColor, ChessPiece piece) {
         String textColor = EscapeSequences.SET_TEXT_COLOR_BLUE;
@@ -95,7 +85,7 @@ public class DrawBoard {
 
 
     }
-    private void drawBoard(boolean whiteOrientation) {
+    public void drawBoard(boolean whiteOrientation) {
         drawHorizontalBoarder(whiteOrientation);
 
         if (whiteOrientation) {

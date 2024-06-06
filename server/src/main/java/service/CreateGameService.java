@@ -5,8 +5,6 @@ import model.GameData;
 import dataaccess.*;
 import utilities.*;
 
-import java.util.ArrayList;
-
 public class CreateGameService extends Service {
     public static CreateGameResult createGame(CreateGameRequest req) throws HTMLException {
         verifyUser(req.authToken());

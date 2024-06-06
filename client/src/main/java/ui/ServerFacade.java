@@ -2,7 +2,7 @@ package ui;
 
 import com.google.gson.Gson;
 import model.GameData;
-import service.HTMLException;
+import utilities.HTMLException;
 import utilities.*;
 
 import java.util.Collection;

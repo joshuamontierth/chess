@@ -1,7 +1,7 @@
 package ui;
 
 import com.google.gson.Gson;
-import service.HTMLException;
+import utilities.HTMLException;
 
 import java.io.*;
 import java.net.HttpURLConnection;
