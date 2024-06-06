@@ -1,8 +1,11 @@
 package ui;
 
 import com.google.gson.Gson;
+import model.GameData;
 import service.HTMLException;
 import utilities.*;
+
+import java.util.Collection;
 
 public class ServerFacade {
     private final String urlStub;
@@ -70,7 +73,24 @@ public class ServerFacade {
         Gson gson = new Gson();
         String responseString = interfaceWithConnector(url,req,authToken, "post");
         CreateGameResult res = gson.fromJson(responseString,CreateGameResult.class);
-        System.out.println(res.gameID());
 
+    }
+
+    public Collection<GameData> listGames(String authToken) throws HTMLException {
+        String url = urlStub + "/game";
+        Gson gson = new Gson();
+        String responseString = interfaceWithConnector(url,null,authToken, "get");
+        ListGamesResult res = gson.fromJson(responseString,ListGamesResult.class);
+        return res.games();
+
+    }
+    public void joinGame(int gameID, int colorSelect, String authToken) throws HTMLException {
+        String url = urlStub + "/game";
+        String colorString = "BLACK";
+        if (colorSelect == 1) {
+            colorString = "WHITE";
+        }
+        JoinGameRequest req = new JoinGameRequest(authToken,colorString,gameID);
+        interfaceWithConnector(url,req,authToken, "put");
     }
 }

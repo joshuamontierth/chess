@@ -1,7 +1,10 @@
 package ui;
 
+import model.GameData;
 import service.HTMLException;
 
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -12,6 +15,7 @@ public class Client {
     private boolean firstPostLogin = true;
     private String authToken = null;
     private ServerFacade server;
+    HashMap<Integer,Integer> gameMap = new HashMap<Integer,Integer>();
 
 
     public void run(String hostname, int port) {
@@ -88,7 +92,7 @@ public class Client {
             switch (option) {
                 case 1:
                     createGame();
-                    System.out.println("Game created");
+
                     break;
                 case 2:
                     listGames();
@@ -119,6 +123,13 @@ public class Client {
     }
 
     private void listGames() {
+        try {
+            Collection<GameData> games = server.listGames(authToken);
+            printGameList(games);
+        }
+        catch (HTMLException e) {
+            System.out.println("Bad request: " + e.getMessage());
+        }
     }
 
     private void createGame() {
@@ -127,12 +138,52 @@ public class Client {
         String gameName = scanner.nextLine();
         try {
             server.createGame(gameName, authToken);
+            System.out.println("Game created");
         }
         catch (HTMLException e) {
             System.out.println("Bad request: " + e.getMessage());
         }
     }
     private void joinGame(boolean observerMode) {
+        System.out.println("Select a game to join:");
+        Scanner scanner = new Scanner(System.in);
+        int gameSelect = 0;
+        try {
+            gameSelect = scanner.nextInt();
+        }
+        catch (InputMismatchException e) {
+            System.out.println("Invalid input, please enter a valid game number");
+        }
+        gameSelect = gameMap.getOrDefault(gameSelect, 0);
+        if (gameSelect == 0) {
+            System.out.println("Invalid input, please enter a valid game number");
+        }
+        else {
+            System.out.println("Select 1 for white or 2 for black:");
+            int colorSelect = 0;
+            try {
+                colorSelect = scanner.nextInt();
+            }
+            catch (InputMismatchException e) {
+                System.out.println("Invalid input, Select 1 for white or 2 for black:");
+            }
+            if (colorSelect != 1 && colorSelect != 2) {
+                System.out.println("Invalid input, Select 1 for white or 2 for black:");
+            }
+            try {
+                server.joinGame(gameSelect, colorSelect, authToken);
+                System.out.println("Game joined");
+            }
+            catch (HTMLException e) {
+                if (e.getErrorCode() == 403) {
+                    System.out.println("Already taken, please try again");
+                }
+                else {
+                    System.out.println("Bad request: " + e.getMessage());
+                }
+            }
+        }
+
     }
     private void logout() {
         try {
@@ -186,5 +237,27 @@ public class Client {
 
         }
 
+    }
+    private void printGameList(Collection<GameData> games) {
+        int i = 0;
+        for (var game : games) {
+            i++;
+            gameMap.put(i,game.gameID());
+            System.out.print(i + ". " + game.gameName() + "\n   White: ");
+            if (game.whiteUsername() != null) {
+                System.out.print(game.whiteUsername());
+            }
+            else {
+                System.out.print("None");
+            }
+            System.out.print("\n   Black: ");
+            if (game.blackUsername() != null) {
+                System.out.print(game.blackUsername());
+            }
+            else {
+                System.out.print("None");
+            }
+            System.out.println();
+        }
     }
 }
