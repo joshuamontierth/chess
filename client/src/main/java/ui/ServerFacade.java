@@ -7,9 +7,7 @@ import utilities.request.CreateGameRequest;
 import utilities.request.JoinGameRequest;
 import utilities.request.LoginRequest;
 import utilities.request.RegisterUserRequest;
-import utilities.result.ListGamesResult;
-import utilities.result.LoginResult;
-import utilities.result.RegisterUserResult;
+import utilities.result.*;
 
 import java.util.Collection;
 
@@ -42,10 +40,14 @@ public class ServerFacade {
         String url = urlStub + "/session";
         interfaceWithConnector(url,null,authToken, "delete");
     }
-    public void createGame(String gameName, String authToken) throws HTMLException {
+    public int createGame(String gameName, String authToken) throws HTMLException {
         String url = urlStub + "/game";
         CreateGameRequest req = new CreateGameRequest(authToken, gameName);
-        interfaceWithConnector(url,req,authToken, "post");
+        String responseString = interfaceWithConnector(url,req,authToken, "post");
+        Gson gson = new Gson();
+        CreateGameResult res = gson.fromJson(responseString,CreateGameResult.class);
+        return res.gameID();
+
 
     }
     public Collection<GameData> listGames(String authToken) throws HTMLException {
@@ -67,6 +69,7 @@ public class ServerFacade {
         }
         JoinGameRequest req = new JoinGameRequest(authToken,colorString,gameID);
         interfaceWithConnector(url,req,authToken, "put");
+
     }
 
     private String interfaceWithConnector(String url, Object req, String authToken, String method) throws HTMLException {
