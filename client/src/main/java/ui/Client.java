@@ -273,5 +273,9 @@ public class Client {
             }
             System.out.println();
         }
+    if (games.isEmpty()) {
+        System.out.println("No games found");
+        }
     }
+
 }
