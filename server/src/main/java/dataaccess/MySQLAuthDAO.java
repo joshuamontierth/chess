@@ -6,14 +6,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 public class MySQLAuthDAO implements AuthDAOInterface{
-    public MySQLAuthDAO() {
-        try {
-            DatabaseManager.createDatabase();
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     @Override
     public void createAuth(AuthData auth)  {

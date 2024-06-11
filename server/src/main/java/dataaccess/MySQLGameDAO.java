@@ -10,14 +10,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 public class MySQLGameDAO implements GameDAOInterface{
-    public MySQLGameDAO() {
-        try {
-            DatabaseManager.createDatabase();
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     @Override
     public void clear() {

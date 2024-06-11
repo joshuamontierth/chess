@@ -1,7 +1,6 @@
-package ui;
+package utilities;
 
 import com.google.gson.Gson;
-import utilities.HTMLException;
 
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -86,6 +85,7 @@ public class ClientConnector {
             InputStreamReader reader = new InputStreamReader(responseBody);
             BufferedReader bufferedReader = new BufferedReader(reader);
             return bufferedReader.readLine();
+
 
         } else {
             throw new HTMLException(connection.getResponseMessage(),connection.getResponseCode());

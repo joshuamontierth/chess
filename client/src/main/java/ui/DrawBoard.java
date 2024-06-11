@@ -99,6 +99,7 @@ public class DrawBoard {
             }
         }
         drawHorizontalBoarder(whiteOrientation);
+        System.out.print(EscapeSequences.RESET_TEXT_COLOR + EscapeSequences.SET_TEXT_FAINT);
     }
 
 

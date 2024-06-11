@@ -2,6 +2,7 @@ package ui;
 
 import com.google.gson.Gson;
 import model.GameData;
+import utilities.ClientConnector;
 import utilities.HTMLException;
 import utilities.request.CreateGameRequest;
 import utilities.request.JoinGameRequest;

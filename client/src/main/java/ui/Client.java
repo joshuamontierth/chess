@@ -1,21 +1,24 @@
 package ui;
 
+import chess.ChessGame;
 import model.GameData;
 import utilities.HTMLException;
+import utilities.ServerMessageObserver;
+import websocket.messages.ServerMessage;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 import static java.lang.System.exit;
 
-public class Client {
+public class Client implements ServerMessageObserver {
     private boolean firstPreLogin = true;
     private boolean firstPostLogin = true;
     private String authToken = null;
     private ServerFacade server;
     private HashMap<Integer,Integer> gameMap = new HashMap<Integer,Integer>();
     private GameData gameData = null;
-
 
     public void run(String hostname, int port) {
         server = new ServerFacade(hostname, port);
@@ -29,7 +32,6 @@ public class Client {
 
         }
     }
-
     private void printPreloginOptions() {
         System.out.println("1. Register");
         System.out.println("2. Login");
@@ -47,7 +49,6 @@ public class Client {
         System.out.println("Please select an option");
 
     }
-
     private void prelogin() {
         if (firstPreLogin) {
             printPreloginOptions();
@@ -170,34 +171,39 @@ public class Client {
                 if (colorSelect != 1 && colorSelect != 2) {
                     System.out.println("Invalid input, Select 1 for white or 2 for black:");
                 }
-            }
-            try {
-                server.joinGame(gameSelect, colorSelect, authToken);
-                if (colorSelect != 0) {
-                    System.out.println("Game joined");
-                }
-                else {
-                    System.out.println("Game joined as observer");
-                }
-                if (games != null) {
-                    for (var game : games) {
-                        if (game.gameID() == gameSelect) {
-                            gameData = game;
-                        }
+
+                try {
+                    server.joinGame(gameSelect, colorSelect, authToken);
+                    if (colorSelect != 0) {
+                        System.out.println("Game joined");
+                    } else {
+                        System.out.println("Game joined as observer");
                     }
-                    DrawBoard boardDrawer = new DrawBoard(gameData.game().getBoard().getBoard());
-                    boardDrawer.drawBoard(true);
-                    System.out.println();
-                    boardDrawer.drawBoard(false);
+                    if (games != null) {
+                        for (var game : games) {
+                            if (game.gameID() == gameSelect) {
+                                gameData = game;
+                            }
+                        }
+                        DrawBoard boardDrawer = new DrawBoard(gameData.game().getBoard().getBoard());
+                        boardDrawer.drawBoard(true);
+                        System.out.println();
+                        boardDrawer.drawBoard(false);
+                    }
+                } catch (HTMLException e) {
+                    if (e.getErrorCode() == 403) {
+                        System.out.println("Already taken, please try again");
+                    } else {
+                        System.out.println("Bad request: " + e.getMessage());
+                    }
                 }
             }
-            catch (HTMLException e) {
-                if (e.getErrorCode() == 403) {
-                    System.out.println("Already taken, please try again");
-                }
-                else {
-                    System.out.println("Bad request: " + e.getMessage());
-                }
+            else {
+                DrawBoard boardDrawer = new DrawBoard(new ChessGame().getBoard().getBoard());
+                boardDrawer.drawBoard(true);
+                System.out.println();
+                boardDrawer.drawBoard(false);
+
             }
         }
 
@@ -278,4 +284,8 @@ public class Client {
         }
     }
 
+    @Override
+    public void notify(ServerMessage message) {
+
+    }
 }

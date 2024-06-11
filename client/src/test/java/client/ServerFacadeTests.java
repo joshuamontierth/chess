@@ -2,7 +2,7 @@ package client;
 
 import org.junit.jupiter.api.*;
 import server.Server;
-import ui.ClientConnector;
+import utilities.ClientConnector;
 import ui.ServerFacade;
 import utilities.HTMLException;
 
