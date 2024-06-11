@@ -30,7 +30,14 @@ public class UserGameCommand {
 
     private ChessMove move;
     private int gameID;
+    private int colorCode;
 
+    public void setColorCode(int colorCode) {
+        this.colorCode = colorCode;
+    }
+    public int getColorCode() {
+        return colorCode;
+    }
     public void setGameID(int gameID) {
         this.gameID = gameID;
     }
