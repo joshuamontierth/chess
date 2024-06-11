@@ -29,6 +29,14 @@ public class UserGameCommand {
     private final String authToken;
 
     private ChessMove move;
+    private int gameID;
+
+    public void setGameID(int gameID) {
+        this.gameID = gameID;
+    }
+    public int getGameID() {
+        return gameID;
+    }
 
     public void setMove (ChessMove move) {
         this.move = move;
