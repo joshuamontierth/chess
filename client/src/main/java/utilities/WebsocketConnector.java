@@ -1,12 +1,15 @@
 package utilities;
 
-
-
-import org.glassfish.tyrus.core.wsadl.model.Endpoint;
+import com.google.gson.Gson;
 
 import javax.websocket.*;
+import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 
+
+
+@ClientEndpoint
 public class WebsocketConnector extends Endpoint {
     private Session session;
 
@@ -16,14 +19,20 @@ public class WebsocketConnector extends Endpoint {
         this.session = container.connectToServer(this, uri);
 
         this.session.addMessageHandler(new MessageHandler.Whole<String>() {
+            @Override
             public void onMessage(String message) {
                 System.out.println(message);
             }
         });
     }
 
-    public void send(String msg) throws Exception {this.session.getBasicRemote().sendText(msg);}
-    public void onOpen(Session session, EndpointConfig endpointConfig) {}
+    @Override
+    public void onOpen(Session session, EndpointConfig config) {
+    }
+
+    public void send(String msg) throws Exception {
+        this.session.getBasicRemote().sendText(msg);
+    }
 }
 
 

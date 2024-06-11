@@ -9,6 +9,10 @@ import utilities.*;
 import utilities.request.*;
 
 public class Server {
+    private final WebSocketHandler webSocketHandler;
+    public Server() {
+        webSocketHandler = new WebSocketHandler();
+    }
 
     public int run(int desiredPort) {
         try {
@@ -20,6 +24,7 @@ public class Server {
         Spark.port(desiredPort);
 
         Spark.staticFiles.location("web");
+        Spark.webSocket("/connect", webSocketHandler);
 
         // Register your endpoints and handle exceptions here.
         Gson gson = new Gson();
