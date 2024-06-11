@@ -26,6 +26,10 @@ public class UserGameCommand {
 
     protected CommandType commandType;
 
+    public void setCommandType(CommandType commandType) {
+        this.commandType = commandType;
+    }
+
     private final String authToken;
 
     private ChessMove move;
