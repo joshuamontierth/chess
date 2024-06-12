@@ -14,12 +14,15 @@ public class ChessGame {
     private TeamColor teamTurn;
     private ChessBoard board;
     private ChessMove previousMove;
+    private boolean gameComplete;
     public ChessGame() {
         teamTurn = TeamColor.WHITE;
         previousMove = null;
         board = new ChessBoard();
         board.resetBoard();
+        gameComplete = false;
     }
+
 
     /**
      * @return Which team's turn it is
@@ -35,6 +38,9 @@ public class ChessGame {
      */
     public void setTeamTurn(TeamColor team) {
         this.teamTurn = team;
+    }
+    public void setGameComplete() {
+        gameComplete = true;
     }
 
     /**
@@ -100,15 +106,17 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-
+        if (gameComplete) {
+            throw new InvalidMoveException("Game is complete. No further moves may be made.");
+        }
         ChessPosition startPosition = move.getStartPosition();
         if (this.board.getPiece(startPosition) == null) {
 
-            throw new InvalidMoveException();
+            throw new InvalidMoveException("There is no piece there.");
         }
         if (this.board.getPiece(startPosition).getTeamColor() != this.teamTurn) {
 
-            throw new InvalidMoveException();
+            throw new InvalidMoveException("Not your turn.");
         }
         ChessPosition endPosition = move.getEndPosition();
         Collection<ChessMove> validMoves = validMoves(startPosition);
@@ -133,7 +141,7 @@ public class ChessGame {
 
         else {
 
-            throw new InvalidMoveException();
+            throw new InvalidMoveException("Not a legal move.");
         }
     }
     public void executeEnPassant(ChessMove move) {

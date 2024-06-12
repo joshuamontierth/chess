@@ -8,22 +8,16 @@ import dataaccess.MySQLAuthDAO;
 import dataaccess.MySQLGameDAO;
 import model.GameData;
 import org.eclipse.jetty.websocket.api.annotations.*;
-
 import org.eclipse.jetty.websocket.api.Session;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ServerMessage;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 @WebSocket
 public class WebSocketHandler {
-    private HashMap<Session, Integer> sessions = new HashMap<>();
-
-
-
-
+    private final HashMap<Session, Integer> sessions = new HashMap<>();
 
     @OnWebSocketMessage
     public void onMessage(Session session, String message) throws IOException {
@@ -42,8 +36,27 @@ public class WebSocketHandler {
         }
     }
 
-    private void resign(int gameID, Session session, String authString) {
+    private void resign(int gameID, Session session, String authString) throws IOException {
+        String username = getUsername(authString,session);
+        GameData game = getGameData(gameID, session);
+        if (username == null || game == null) {
+            return;
+        }
+        game.game().setGameComplete();
+        MySQLGameDAO gameDAO = new MySQLGameDAO();
+        try {
+            gameDAO.updateGame(game);
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+        String color = username.equals(game.blackUsername()) ? "White" : "Black";
+        ServerMessage resignBroadcastMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
+        resignBroadcastMessage.setMessageBody(username + " has resigned." + color + " has won!");
+        broadcast(gameID,session,resignBroadcastMessage);
 
+        ServerMessage resignMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
+        resignMessage.setMessageBody("You have resigned.");
+        send(session,resignMessage);
     }
 
     private void leaveGame(int gameID, Session session, String authString) throws IOException {
