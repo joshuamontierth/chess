@@ -96,10 +96,10 @@ public class WebSocketService {
             throw new RuntimeException(e);
         }
 
-        ServerMessage madeMoveMessageBroadcast = new LoadGameMessage(username + " has moved " + move,game);
+        ServerMessage madeMoveMessageBroadcast = new LoadGameMessage(username + " has moved " + move,newGameData);
         broadcast(gameID,session,madeMoveMessageBroadcast);
 
-        ServerMessage madeMoveMessage = new LoadGameMessage(null, game);
+        ServerMessage madeMoveMessage = new LoadGameMessage(null, newGameData);
         send(session,madeMoveMessage);
     }
 
@@ -119,7 +119,7 @@ public class WebSocketService {
         ServerMessage joinMessageBroadcast = new NotificationMessage(username + " has joined the game as " + team);
         broadcast(gameID,session,joinMessageBroadcast);
 
-        ServerMessage joinMessage = new LoadGameMessage("You have successfully joined the game",game.game());
+        ServerMessage joinMessage = new LoadGameMessage("You have successfully joined the game",game);
         send(session, joinMessage);
     }
 

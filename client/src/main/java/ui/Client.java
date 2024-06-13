@@ -9,9 +9,13 @@ import model.GameData;
 import utilities.HTMLException;
 import utilities.ServerMessageObserver;
 import utilities.WebsocketConnector;
+import websocket.commands.ConnectCommand;
 import websocket.commands.LeaveCommand;
 import websocket.commands.MakeMoveCommand;
 import websocket.commands.ResignCommand;
+import websocket.messages.ErrorMessage;
+import websocket.messages.LoadGameMessage;
+import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
 
 import java.io.IOException;
@@ -33,10 +37,11 @@ public class Client implements ServerMessageObserver {
     private String team;
     private WebsocketConnector websocket;
     private Integer gameID;
+    private boolean gameplayState = false;
 
     public void run(String hostname, int port) throws Exception {
         server = new ServerFacade(hostname, port);
-        websocket = new WebsocketConnector(hostname, port);
+        websocket = new WebsocketConnector(hostname, port, this);
         System.out.println("Welcome to 240 Chess");
 
         while(true) {
@@ -106,7 +111,7 @@ public class Client implements ServerMessageObserver {
         }
 
     }
-    private void postLogin() {
+    private void postLogin() throws IOException {
         if (firstPostLogin) {
             printPostloginOptions();
             firstPostLogin = false;
@@ -182,7 +187,6 @@ public class Client implements ServerMessageObserver {
         boolean whiteOrientation = !team.equals("Black");
         boardDrawer.drawBoard(whiteOrientation);
     }
-
     private void makeMove() throws IOException {
         System.out.println("Enter your move in the following format: e7e8 queen, where queen is the promotion piece if applicable.");
         String regex = "([a-h][1-8]){2} (queen|knight|bishop|rook)?";
@@ -229,10 +233,10 @@ public class Client implements ServerMessageObserver {
         Gson gson = new Gson();
         websocket.send(gson.toJson(resignCommand));
     }
-
     private void highlightMoves() {
 
     }
+
     private Collection<GameData> listGames() {
         try {
             Collection<GameData> games = server.listGames(authToken);
@@ -256,7 +260,7 @@ public class Client implements ServerMessageObserver {
             System.out.println("Bad request: " + e.getMessage());
         }
     }
-    private void joinGame(boolean observerMode) {
+    private void joinGame(boolean observerMode) throws IOException {
         var games = listGames();
         System.out.println("Select a game to join:");
         Scanner scanner = new Scanner(System.in);
@@ -272,10 +276,10 @@ public class Client implements ServerMessageObserver {
             System.out.println("Invalid input, please enter a valid game number");
         }
         else {
-            int colorSelect = 0;
+            gameID = gameSelect;
             if (!observerMode) {
+                int colorSelect = 0;
                 System.out.println("Select 1 for white or 2 for black:");
-
                 try {
                     colorSelect = scanner.nextInt();
                 } catch (InputMismatchException e) {
@@ -287,22 +291,7 @@ public class Client implements ServerMessageObserver {
 
                 try {
                     server.joinGame(gameSelect, colorSelect, authToken);
-                    if (colorSelect != 0) {
-                        System.out.println("Game joined");
-                    } else {
-                        System.out.println("Game joined as observer");
-                    }
-                    if (games != null) {
-                        for (var game : games) {
-                            if (game.gameID() == gameSelect) {
-                                gameData = game;
-                            }
-                        }
-                        BoardDrawer boardDrawer = new BoardDrawer(gameData.game().getBoard().getBoard());
-                        boardDrawer.drawBoard(true);
-                        System.out.println();
-                        boardDrawer.drawBoard(false);
-                    }
+                    team = (gameSelect == 1) ? "White" : "Black";
                 } catch (HTMLException e) {
                     if (e.getErrorCode() == 403) {
                         System.out.println("Already taken, please try again");
@@ -311,12 +300,19 @@ public class Client implements ServerMessageObserver {
                     }
                 }
             }
-            else {
-                BoardDrawer boardDrawer = new BoardDrawer(new ChessGame().getBoard().getBoard());
-                boardDrawer.drawBoard(true);
-                System.out.println();
-                boardDrawer.drawBoard(false);
+            if (games != null) {
+                for (var game : games) {
+                    if (game.gameID() == gameSelect) {
+                        gameData = game;
+                    }
+                }
 
+            }
+            ConnectCommand connectCommand = new ConnectCommand(authToken,gameID);
+            Gson gson = new Gson();
+            websocket.send(gson.toJson(connectCommand));
+            while(gameplayState) {
+                gamePlay();
             }
         }
 
@@ -399,6 +395,27 @@ public class Client implements ServerMessageObserver {
 
     @Override
     public void notify(ServerMessage message) {
+        switch (message.getServerMessageType()) {
+            case NOTIFICATION -> processNotification((NotificationMessage) message);
+            case ERROR -> processError((ErrorMessage) message);
+            case LOAD_GAME -> processLoadGame((LoadGameMessage) message);
+        }
 
+    }
+
+    private void processLoadGame(LoadGameMessage message) {
+        gameData = message.getGame();
+        drawBoard();
+        if(message.getMessageBody()!= null) {
+            System.out.println(message.getMessageBody());
+        }
+    }
+
+    private void processError(ErrorMessage message) {
+        System.out.println(message.getMessageBody());
+    }
+
+    private void processNotification(NotificationMessage message) {
+        System.out.println(message.getMessageBody());
     }
 }

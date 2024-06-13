@@ -17,7 +17,7 @@ public class WebSocketHandler {
     @OnWebSocketMessage
     public void onMessage(Session session, String message) throws IOException {
         GsonBuilder builder = new GsonBuilder();
-        builder.registerTypeAdapter(Authentication.User.class, new UserGameCommandDeserializer());
+        builder.registerTypeAdapter(UserGameCommand.class, new UserGameCommandDeserializer());
         Gson gson = builder.create();
         UserGameCommand gameCommand = gson.fromJson(message, UserGameCommand.class);
 
