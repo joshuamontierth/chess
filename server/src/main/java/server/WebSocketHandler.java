@@ -29,11 +29,7 @@ public class WebSocketHandler {
             case LEAVE -> leaveGame(gameCommand.getGameID(), session, gameCommand.getAuthString());
             case RESIGN -> resign(gameCommand.getGameID(), session, gameCommand.getAuthString());
         }
-        try {
-            session.getRemote().sendString(message);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+
     }
 
 }

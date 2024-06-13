@@ -34,6 +34,10 @@ public class WebSocketService {
             sendError(session,"Game is complete, you cannot resign.");
             return;
         }
+        if (!username.equals(game.whiteUsername()) && !username.equals(game.blackUsername())) {
+            sendError(session,"You are not a player, you cannot resign.");
+            return;
+        }
         game.game().setGameComplete();
         MySQLGameDAO gameDAO = new MySQLGameDAO();
         try {
@@ -68,8 +72,7 @@ public class WebSocketService {
         sessions.remove(session);
         userMap.remove(username);
 
-        ServerMessage leftMessage = new NotificationMessage("You have left the game.");
-        send(session,leftMessage);
+
     }
 
     private static GameData createNewGame(int gameID, GameData game, String username) {
@@ -105,6 +108,7 @@ public class WebSocketService {
         ChessGame.TeamColor userColor = username.equals(gameData.whiteUsername()) ? ChessGame.TeamColor.WHITE : ChessGame.TeamColor.BLACK;
         if (game.getTeamTurn() != userColor) {
             sendError(session, "Error, not your turn!");
+            return;
         }
 
         try {
@@ -193,10 +197,9 @@ public class WebSocketService {
 
         ServerMessage joinMessageBroadcast = new NotificationMessage(username + " has joined the game as " + team);
         broadcast(gameID,session,joinMessageBroadcast);
-        String joinMessageString = team.equals("an observer") ? "You have successfully joined the game as an observer" : "You have successfully joined the game";
         ServerMessage joinMessage = new LoadGameMessage(game);
         send(session, joinMessage);
-        send (session, new NotificationMessage(joinMessageString));
+
     }
 
     private static String getUsername(String authToken, Session session) throws IOException {
