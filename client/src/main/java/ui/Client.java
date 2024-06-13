@@ -470,7 +470,6 @@ public class Client implements ServerMessageObserver {
         System.out.println("No games found");
         }
     }
-
     @Override
     public void notify(ServerMessage message) {
         switch (message.getServerMessageType()) {
@@ -481,19 +480,18 @@ public class Client implements ServerMessageObserver {
 
     }
     private void processLoadGame(LoadGameMessage message) {
-        gameData = message.getGame();
-        drawBoard();
-        if(message.getMessageBody()!= null) {
-            System.out.println(message.getMessageBody());
+        if(message.getGame()!= null) {
+            gameData = message.getGame();
+            drawBoard();
         }
     }
     private void processError(ErrorMessage message) {
-        System.out.println(message.getMessageBody());
+        System.out.println(message.getErrorMessage());
     }
     private void processNotification(NotificationMessage message) {
-        if (message.getMessageBody().equals("You have left the game.")) {
+        if (message.getMessage().equals("You have left the game.")) {
             gameplayState = false;
         }
-        System.out.println(message.getMessageBody());
+        System.out.println(message.getMessage());
     }
 }

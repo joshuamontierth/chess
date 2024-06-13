@@ -123,10 +123,11 @@ public class WebSocketService {
 
 
 
-        ServerMessage madeMoveMessageBroadcast = new LoadGameMessage(username + " has moved " + move,newGameData);
+        ServerMessage madeMoveMessageBroadcast = new LoadGameMessage(newGameData);
         broadcast(gameID,session,madeMoveMessageBroadcast);
+        broadcast(gameID,session,new NotificationMessage(username + " has moved " + move));
 
-        ServerMessage madeMoveMessage = new LoadGameMessage(null, newGameData);
+        ServerMessage madeMoveMessage = new LoadGameMessage(newGameData);
         send(session,madeMoveMessage);
 
         specialStateCheck(gameID, game, gameData);
@@ -150,7 +151,7 @@ public class WebSocketService {
             send(opponentSession,checkmateMessage);
         }
         else if(game.isInStalemate(game.getTeamTurn())) {
-            game.setGameComplete();;
+            game.setGameComplete();
             ServerMessage stalemateMessageBroadcast = new NotificationMessage(opponentUsername + " is in stalemate. It's a draw!");
             broadcast(gameID, opponentSession,stalemateMessageBroadcast);
 
@@ -193,8 +194,9 @@ public class WebSocketService {
         ServerMessage joinMessageBroadcast = new NotificationMessage(username + " has joined the game as " + team);
         broadcast(gameID,session,joinMessageBroadcast);
         String joinMessageString = team.equals("an observer") ? "You have successfully joined the game as an observer" : "You have successfully joined the game";
-        ServerMessage joinMessage = new LoadGameMessage(joinMessageString,game);
+        ServerMessage joinMessage = new LoadGameMessage(game);
         send(session, joinMessage);
+        send (session, new NotificationMessage(joinMessageString));
     }
 
     private static String getUsername(String authToken, Session session) throws IOException {

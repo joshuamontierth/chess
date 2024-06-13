@@ -24,7 +24,7 @@ public class Server {
         Spark.port(desiredPort);
 
         Spark.staticFiles.location("web");
-        Spark.webSocket("/connect", webSocketHandler);
+        Spark.webSocket("/ws", webSocketHandler);
 
         // Register your endpoints and handle exceptions here.
         Gson gson = new Gson();

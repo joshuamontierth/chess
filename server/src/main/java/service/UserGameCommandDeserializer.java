@@ -10,7 +10,7 @@ public class UserGameCommandDeserializer implements JsonDeserializer<UserGameCom
     public UserGameCommand deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext context) throws JsonParseException {
         JsonObject jsonObject = jsonElement.getAsJsonObject();
 
-        String typeString = jsonObject.get("type").getAsString();
+        String typeString = jsonObject.get("commandType").getAsString();
         UserGameCommand.CommandType commandType = UserGameCommand.CommandType.valueOf(typeString);
 
         return switch(commandType) {

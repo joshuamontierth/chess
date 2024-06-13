@@ -16,7 +16,7 @@ public class WebsocketConnector extends Endpoint {
     private Session session;
 
     public WebsocketConnector(String hostname, int port, ServerMessageObserver serverMessageObserver) throws Exception {
-        URI uri = new URI("ws://" + hostname + ":" + port + "/connect");
+        URI uri = new URI("ws://" + hostname + ":" + port + "/ws");
         WebSocketContainer container = ContainerProvider.getWebSocketContainer();
         this.session = container.connectToServer(this, uri);
 

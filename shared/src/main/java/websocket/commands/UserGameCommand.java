@@ -6,16 +6,15 @@ import java.util.Objects;
 
 /**
  * Represents a command a user can send the server over a websocket
- * 
  * Note: You can add to this class, but you should not alter the existing
  * methods.
  */
 public class UserGameCommand {
 
-    public UserGameCommand(String authToken,CommandType type, int gameID) {
+    public UserGameCommand(String authToken,CommandType commandType, int gameID) {
         this.authToken = authToken;
         this.gameID = gameID;
-        this.type = type;
+        this.commandType = commandType;
     }
 
     public enum CommandType {
@@ -25,7 +24,7 @@ public class UserGameCommand {
         RESIGN
     }
 
-    protected CommandType type;
+    protected CommandType commandType;
     protected final int gameID;
     protected final String authToken;
 
@@ -39,7 +38,7 @@ public class UserGameCommand {
         return authToken;
     }
     public CommandType getCommandType() {
-        return this.type;
+        return this.commandType;
     }
 
     @Override
