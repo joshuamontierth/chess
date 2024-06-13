@@ -4,10 +4,7 @@ import com.google.gson.Gson;
 import model.GameData;
 import utilities.ClientConnector;
 import utilities.HTMLException;
-import utilities.request.CreateGameRequest;
-import utilities.request.JoinGameRequest;
-import utilities.request.LoginRequest;
-import utilities.request.RegisterUserRequest;
+import utilities.request.*;
 import utilities.result.*;
 
 import java.util.Collection;
@@ -17,7 +14,7 @@ public class ServerFacade {
     private final ClientConnector clientConnector = new ClientConnector();
 
     public ServerFacade(String hostname, int port) {
-        urlStub =  "http://"+ hostname + ":" + port;
+        urlStub =  "http://" + hostname + ":" + port;
     }
 
     public String login(String username, String password) throws HTMLException {

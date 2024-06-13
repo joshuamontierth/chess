@@ -2,9 +2,9 @@ package ui;
 
 import chess.*;
 
-public class DrawBoard {
+public class BoardDrawer {
     private final ChessPiece[][] board;
-    public DrawBoard(ChessPiece[][] board) {
+    public BoardDrawer(ChessPiece[][] board) {
         this.board = board;
     }
     private String convertToChar(ChessPiece.PieceType type) {

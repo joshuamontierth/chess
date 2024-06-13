@@ -11,6 +11,7 @@ import utilities.ServerMessageObserver;
 import utilities.WebsocketConnector;
 import websocket.commands.LeaveCommand;
 import websocket.commands.MakeMoveCommand;
+import websocket.commands.ResignCommand;
 import websocket.messages.ServerMessage;
 
 import java.io.IOException;
@@ -177,7 +178,7 @@ public class Client implements ServerMessageObserver {
     }
 
     private void drawBoard() {
-        DrawBoard boardDrawer = new DrawBoard(gameData.game().getBoard().getBoard());
+        BoardDrawer boardDrawer = new BoardDrawer(gameData.game().getBoard().getBoard());
         boolean whiteOrientation = !team.equals("Black");
         boardDrawer.drawBoard(whiteOrientation);
     }
@@ -204,7 +205,7 @@ public class Client implements ServerMessageObserver {
         Gson gson = new Gson();
         websocket.send(gson.toJson(makeMoveCommand));
     }
-    private void resign() throws IOException {
+    private void leave() throws IOException {
         System.out.println("Please confirm you would like to leave y/n");
         Scanner scanner = new Scanner(System.in);
         String input = scanner.nextLine();
@@ -215,10 +216,23 @@ public class Client implements ServerMessageObserver {
         LeaveCommand leaveCommand = new LeaveCommand(authToken,gameID);
         Gson gson = new Gson();
         websocket.send(gson.toJson(leaveCommand));
-
+    }
+    private void resign() throws IOException {
+        System.out.println("Please confirm you would like to resign y/n");
+        Scanner scanner = new Scanner(System.in);
+        String input = scanner.nextLine();
+        if (!input.equals("y")) {
+            System.out.println("Resuming normal gameplay");
+            return;
+        }
+        ResignCommand resignCommand = new ResignCommand(authToken,gameID);
+        Gson gson = new Gson();
+        websocket.send(gson.toJson(resignCommand));
     }
 
+    private void highlightMoves() {
 
+    }
     private Collection<GameData> listGames() {
         try {
             Collection<GameData> games = server.listGames(authToken);
@@ -284,7 +298,7 @@ public class Client implements ServerMessageObserver {
                                 gameData = game;
                             }
                         }
-                        DrawBoard boardDrawer = new DrawBoard(gameData.game().getBoard().getBoard());
+                        BoardDrawer boardDrawer = new BoardDrawer(gameData.game().getBoard().getBoard());
                         boardDrawer.drawBoard(true);
                         System.out.println();
                         boardDrawer.drawBoard(false);
@@ -298,7 +312,7 @@ public class Client implements ServerMessageObserver {
                 }
             }
             else {
-                DrawBoard boardDrawer = new DrawBoard(new ChessGame().getBoard().getBoard());
+                BoardDrawer boardDrawer = new BoardDrawer(new ChessGame().getBoard().getBoard());
                 boardDrawer.drawBoard(true);
                 System.out.println();
                 boardDrawer.drawBoard(false);
