@@ -49,16 +49,7 @@ public class WebSocketService {
         if (username == null || game == null) {
             return;
         }
-        GameData newGame;
-        if (game.blackUsername().equals(username)) {
-            newGame = new GameData(gameID, game.whiteUsername(), null,game.gameName(),game.game());
-        }
-        else if(game.whiteUsername().equals(username)) {
-            newGame = new GameData(gameID, null, game.blackUsername(),game.gameName(),game.game());
-        }
-        else {
-            newGame = game;
-        }
+        GameData newGame = createNewGame(gameID, game, username);
         MySQLGameDAO gameDAO = new MySQLGameDAO();
         try {
             gameDAO.updateGame(newGame);
@@ -70,8 +61,30 @@ public class WebSocketService {
         broadcast(gameID,session,leftBroadcastMessage);
         sessions.remove(session);
 
-        ServerMessage leftMessage = new NotificationMessage("Successfully left the game");
+        ServerMessage leftMessage = new NotificationMessage("You have left the game.");
         send(session,leftMessage);
+    }
+
+    private static GameData createNewGame(int gameID, GameData game, String username) {
+        GameData newGame;
+        String whiteUsername = null;
+        String blackUsername = null;
+        if (game.blackUsername() != null) {
+            blackUsername = game.blackUsername();
+        }
+        if (game.whiteUsername() != null) {
+            whiteUsername = game.whiteUsername();
+        }
+        if (blackUsername != null && blackUsername.equals(username)) {
+            newGame = new GameData(gameID, whiteUsername, null, game.gameName(), game.game());
+        }
+        else if(whiteUsername != null && whiteUsername.equals(username)) {
+            newGame = new GameData(gameID, null, blackUsername, game.gameName(), game.game());
+        }
+        else {
+            newGame = game;
+        }
+        return newGame;
     }
 
     public static  void makeMove(int gameID, ChessMove move, Session session, String authString) throws IOException {
@@ -103,7 +116,7 @@ public class WebSocketService {
         send(session,madeMoveMessage);
     }
 
-    public static  void connectUser(int gameID, Session session,String authString) throws IOException {
+    public static void connectUser(int gameID, Session session,String authString) throws IOException {
 
         sessions.put(session,gameID);
         String username;
@@ -113,7 +126,16 @@ public class WebSocketService {
         if (username == null || game == null) {
             return;
         }
-        String team = username.equals(game.blackUsername()) ? "Black" : "White";
+        String team;
+        if (username.equals(game.blackUsername())) {
+            team = "black";
+        }
+        else if (username.equals(game.whiteUsername())) {
+            team = "white";
+        }
+        else {
+            team = "an observer";
+        }
 
 
         ServerMessage joinMessageBroadcast = new NotificationMessage(username + " has joined the game as " + team);

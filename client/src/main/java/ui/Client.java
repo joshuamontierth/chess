@@ -1,6 +1,5 @@
 package ui;
 
-import chess.ChessGame;
 import chess.ChessMove;
 import chess.ChessPiece;
 import chess.ChessPosition;
@@ -184,7 +183,11 @@ public class Client implements ServerMessageObserver {
 
     private void drawBoard() {
         BoardDrawer boardDrawer = new BoardDrawer(gameData.game().getBoard().getBoard());
-        boolean whiteOrientation = !team.equals("Black");
+        boolean whiteOrientation;
+        if (team == null) {
+            whiteOrientation = true;
+        }
+        else whiteOrientation = !team.equals("Black");
         boardDrawer.drawBoard(whiteOrientation);
     }
     private void makeMove() throws IOException {
@@ -220,6 +223,18 @@ public class Client implements ServerMessageObserver {
         LeaveCommand leaveCommand = new LeaveCommand(authToken,gameID);
         Gson gson = new Gson();
         websocket.send(gson.toJson(leaveCommand));
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        if (gameplayState) {
+            System.out.println("Game was not left successfully");
+            return;
+        }
+        team = null;
+        gameData = null;
+
     }
     private void resign() throws IOException {
         System.out.println("Please confirm you would like to resign y/n");
@@ -291,13 +306,15 @@ public class Client implements ServerMessageObserver {
 
                 try {
                     server.joinGame(gameSelect, colorSelect, authToken);
-                    team = (gameSelect == 1) ? "White" : "Black";
+                    team = (colorSelect == 1) ? "White" : "Black";
                 } catch (HTMLException e) {
                     if (e.getErrorCode() == 403) {
                         System.out.println("Already taken, please try again");
+
                     } else {
                         System.out.println("Bad request: " + e.getMessage());
                     }
+                    return;
                 }
             }
             if (games != null) {
@@ -311,6 +328,13 @@ public class Client implements ServerMessageObserver {
             ConnectCommand connectCommand = new ConnectCommand(authToken,gameID);
             Gson gson = new Gson();
             websocket.send(gson.toJson(connectCommand));
+            gameplayState = true;
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+
             while(gameplayState) {
                 gamePlay();
             }
@@ -416,6 +440,9 @@ public class Client implements ServerMessageObserver {
     }
 
     private void processNotification(NotificationMessage message) {
+        if (message.getMessageBody().equals("You have left the game.")) {
+            gameplayState = false;
+        }
         System.out.println(message.getMessageBody());
     }
 }
