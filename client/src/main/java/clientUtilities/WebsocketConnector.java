@@ -1,4 +1,4 @@
-package utilities;
+package clientUtilities;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

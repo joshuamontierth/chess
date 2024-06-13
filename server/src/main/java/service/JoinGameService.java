@@ -2,7 +2,6 @@ package service;
 
 import dataaccess.DataAccessException;
 import dataaccess.GameDAOInterface;
-import dataaccess.MySQLAuthDAO;
 import dataaccess.MySQLGameDAO;
 import model.GameData;
 import utilities.HTMLException;
