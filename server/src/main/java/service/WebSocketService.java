@@ -37,7 +37,7 @@ public class WebSocketService {
             throw new RuntimeException(e);
         }
         String color = username.equals(game.blackUsername()) ? "White" : "Black";
-        ServerMessage resignBroadcastMessage = new NotificationMessage(username + " has resigned. " + color + "won!");
+        ServerMessage resignBroadcastMessage = new NotificationMessage(username + " has resigned. " + color + " won!");
         broadcast(gameID,session,resignBroadcastMessage);
 
         ServerMessage resignMessage = new NotificationMessage("You have resigned.");

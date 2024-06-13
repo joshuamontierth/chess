@@ -25,7 +25,7 @@ public class Client implements ServerMessageObserver {
     private boolean firstPostLogin = true;
     private String authToken = null;
     private ServerFacade server;
-    private HashMap<Integer,Integer> gameMap = new HashMap<Integer,Integer>();
+    private final HashMap<Integer,Integer> gameMap = new HashMap<>();
     private GameData gameData = null;
     private String team;
     private WebsocketConnector websocket;
@@ -61,7 +61,6 @@ public class Client implements ServerMessageObserver {
         System.out.println("5. Logout");
         System.out.println("6. Help");
         System.out.println("Please select an option");
-
     }
     private void printGameplayOptions() {
         System.out.println("1. Redraw Chess Board");
@@ -71,7 +70,13 @@ public class Client implements ServerMessageObserver {
         System.out.println("5. Leave");
         System.out.println("6. Help");
         System.out.println("Please select an option");
-
+    }
+    private void printObserverOptions() {
+        System.out.println("1. Redraw Chess Board");
+        System.out.println("2. Highlight Legal Moves");
+        System.out.println("3. Leave");
+        System.out.println("4. Help");
+        System.out.println("Please select an option");
     }
     private void prelogin() {
         if (firstPreLogin) {
@@ -175,6 +180,33 @@ public class Client implements ServerMessageObserver {
             System.out.println("Invalid input, please enter a number between 1 and 6");
         }
     }
+    private void observerPlay() throws IOException {
+        printObserverOptions();
+        Scanner scanner = new Scanner(System.in);
+        try {
+            int option = scanner.nextInt();
+            switch (option) {
+                case 1:
+                    drawBoard();
+                    break;
+                case 2:
+                    highlightMoves();
+                    break;
+                case 3:
+                    leave();
+                    break;
+                case 4:
+                    printObserverOptions();
+                    break;
+                default:
+                    System.out.println("Invalid option, please enter a number between 1 and 4");
+
+            }
+        }
+        catch (InputMismatchException e) {
+            System.out.println("Invalid input, please enter a number between 1 and 4");
+        }
+    }
 
     private void drawBoard() {
         BoardDrawer boardDrawer = new BoardDrawer(gameData.game().getBoard().getBoard());
@@ -186,11 +218,6 @@ public class Client implements ServerMessageObserver {
         boardDrawer.drawBoard(whiteOrientation);
     }
     private void makeMove() throws IOException {
-        if (observerState) {
-            System.out.println("You are an observer, you cannot play");
-            return;
-
-        }
         System.out.println("Enter your move in the following format: e7e8 queen, where queen is the promotion piece if applicable.");
         String regex = "([a-h][1-8]){2}( queen| knight| bishop| rook)?";
         Pattern pattern = Pattern.compile(regex);
@@ -360,7 +387,12 @@ public class Client implements ServerMessageObserver {
             }
 
             while(gameplayState) {
-                gamePlay();
+                if (observerState) {
+                    observerPlay();
+                }
+                else {
+                    gamePlay();
+                }
             }
         }
 
