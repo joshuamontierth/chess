@@ -97,6 +97,10 @@ public class WebSocketService {
             return;
         }
         ChessGame game = gameData.game();
+        ChessGame.TeamColor userColor = username.equals(gameData.whiteUsername()) ? ChessGame.TeamColor.WHITE : ChessGame.TeamColor.BLACK;
+        if (game.getTeamTurn() != userColor) {
+            sendError(session, "Error, not your turn!");
+        }
 
         try {
             System.out.println(move);
@@ -131,6 +135,7 @@ public class WebSocketService {
         String opponentUsername = game.getTeamTurn()== ChessGame.TeamColor.WHITE ? gameData.whiteUsername() : gameData.blackUsername();
         Session opponentSession = userMap.get(opponentUsername);
         if (game.isInCheckmate(game.getTeamTurn())) {
+            game.setGameComplete();;
             String winningColor = game.oppositeTeam(game.getTeamTurn()).toString().toLowerCase();
             ServerMessage checkmateMessageBroadcast = new NotificationMessage(opponentUsername + " is in checkmate, " + winningColor + " won!");
             broadcast(gameID, opponentSession,checkmateMessageBroadcast);
@@ -139,6 +144,7 @@ public class WebSocketService {
             send(opponentSession,checkmateMessage);
         }
         else if(game.isInStalemate(game.getTeamTurn())) {
+            game.setGameComplete();;
             ServerMessage stalemateMessageBroadcast = new NotificationMessage(opponentUsername + " is in stalemate. It's a draw!");
             broadcast(gameID, opponentSession,stalemateMessageBroadcast);
 
@@ -154,7 +160,6 @@ public class WebSocketService {
 
         }
     }
-
     public static void connectUser(int gameID, Session session,String authString) throws IOException {
 
         sessions.put(session,gameID);
@@ -181,8 +186,8 @@ public class WebSocketService {
 
         ServerMessage joinMessageBroadcast = new NotificationMessage(username + " has joined the game as " + team);
         broadcast(gameID,session,joinMessageBroadcast);
-
-        ServerMessage joinMessage = new LoadGameMessage("You have successfully joined the game",game);
+        String joinMessageString = team.equals("an observer") ? "You have successfully joined the game as an observer" : "You have successfully joined the game";
+        ServerMessage joinMessage = new LoadGameMessage(joinMessageString,game);
         send(session, joinMessage);
     }
 

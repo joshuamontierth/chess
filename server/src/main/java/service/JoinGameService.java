@@ -35,13 +35,6 @@ public class JoinGameService extends Service {
     }
     private static GameData updateUser(JoinGameRequest req, GameData game, String username) throws HTMLException {
         String playerColorUsername;
-        MySQLAuthDAO authDAO = new MySQLAuthDAO();
-        String playerUsername;
-        try {
-            playerUsername = authDAO.getAuth(req.authToken()).username();
-        } catch (DataAccessException e) {
-            throw new HTMLException(e.getMessage(),401);
-        }
 
         if (req.playerColor().equals("WHITE")) {
             playerColorUsername = game.whiteUsername();
@@ -56,7 +49,7 @@ public class JoinGameService extends Service {
         else {
             throw new HTMLException("Error: Not a valid color", 400);
         }
-        if (playerColorUsername != null && !playerUsername.equals(username)) {
+        if (playerColorUsername != null && !username.equals(playerColorUsername)) {
             throw new HTMLException("Error: already taken", 403);
         }
         GameData updatedGame;

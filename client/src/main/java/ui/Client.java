@@ -8,14 +8,8 @@ import model.GameData;
 import utilities.HTMLException;
 import utilities.ServerMessageObserver;
 import utilities.WebsocketConnector;
-import websocket.commands.ConnectCommand;
-import websocket.commands.LeaveCommand;
-import websocket.commands.MakeMoveCommand;
-import websocket.commands.ResignCommand;
-import websocket.messages.ErrorMessage;
-import websocket.messages.LoadGameMessage;
-import websocket.messages.NotificationMessage;
-import websocket.messages.ServerMessage;
+import websocket.commands.*;
+import websocket.messages.*;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -37,6 +31,7 @@ public class Client implements ServerMessageObserver {
     private WebsocketConnector websocket;
     private Integer gameID;
     private boolean gameplayState = false;
+    private boolean observerState = false;
 
     public void run(String hostname, int port) throws Exception {
         server = new ServerFacade(hostname, port);
@@ -191,6 +186,11 @@ public class Client implements ServerMessageObserver {
         boardDrawer.drawBoard(whiteOrientation);
     }
     private void makeMove() throws IOException {
+        if (observerState) {
+            System.out.println("You are an observer, you cannot play");
+            return;
+
+        }
         System.out.println("Enter your move in the following format: e7e8 queen, where queen is the promotion piece if applicable.");
         String regex = "([a-h][1-8]){2}( queen| knight| bishop| rook)?";
         Pattern pattern = Pattern.compile(regex);
@@ -238,6 +238,7 @@ public class Client implements ServerMessageObserver {
         }
         team = null;
         gameData = null;
+        observerState = false;
 
     }
     private void resign() throws IOException {
@@ -253,7 +254,25 @@ public class Client implements ServerMessageObserver {
         websocket.send(gson.toJson(resignCommand));
     }
     private void highlightMoves() {
-
+        System.out.println("Enter the square whose moves you would like to see (example e7)");
+        String regex = "[a-h][1-8]";
+        Pattern pattern = Pattern.compile(regex);
+        Scanner scanner = new Scanner(System.in);
+        String moveInput = scanner.nextLine();
+        if (!pattern.matcher(moveInput).matches()) {
+            System.out.println("Invalid notation, please enter the square in the following format: e7");
+            return;
+        }
+        int col = moveInput.charAt(0) - 'a' + 1;
+        int row = Character.getNumericValue(moveInput.charAt(1));
+        ChessPosition root = new ChessPosition(row, col);
+        BoardDrawer boardDrawer = new BoardDrawer(gameData.game().getBoard().getBoard());
+        boolean whiteOrientation;
+        if (team == null) {
+            whiteOrientation = true;
+        }
+        else whiteOrientation = !team.equals("Black");
+        boardDrawer.drawBoardValidSquares(gameData.game(),root,whiteOrientation);
     }
 
     private Collection<GameData> listGames() {
@@ -280,6 +299,7 @@ public class Client implements ServerMessageObserver {
         }
     }
     private void joinGame(boolean observerMode) throws IOException {
+        observerState = observerMode;
         var games = listGames();
         System.out.println("Select a game to join:");
         Scanner scanner = new Scanner(System.in);

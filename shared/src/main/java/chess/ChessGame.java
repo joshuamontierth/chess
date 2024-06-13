@@ -116,7 +116,7 @@ public class ChessGame {
         }
         if (this.board.getPiece(startPosition).getTeamColor() != this.teamTurn) {
 
-            throw new InvalidMoveException("Not your turn.");
+            throw new InvalidMoveException("Not your piece.");
         }
         ChessPosition endPosition = move.getEndPosition();
         Collection<ChessMove> validMoves = validMoves(startPosition);
