@@ -3,10 +3,12 @@ import chess.ChessGame;
 import chess.ChessMove;
 import chess.InvalidMoveException;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import dataaccess.DataAccessException;
 import dataaccess.MySQLAuthDAO;
 import dataaccess.MySQLGameDAO;
 import model.GameData;
+import org.eclipse.jetty.server.Authentication;
 import org.eclipse.jetty.websocket.api.annotations.*;
 import org.eclipse.jetty.websocket.api.Session;
 import websocket.commands.UserGameCommand;
@@ -21,8 +23,11 @@ public class WebSocketHandler {
 
     @OnWebSocketMessage
     public void onMessage(Session session, String message) throws IOException {
-        Gson gson = new Gson();
+        GsonBuilder builder = new GsonBuilder();
+        builder.registerTypeAdapter(Authentication.User.class, new UserGameCommandDeserializer());
+        Gson gson = builder.create();
         UserGameCommand gameCommand = gson.fromJson(message, UserGameCommand.class);
+
         switch (gameCommand.getCommandType()) {
             case CONNECT -> connectUser(gameCommand.getGameID(), session, gameCommand.getAuthString(),gameCommand.getColorCode());
             case MAKE_MOVE -> makeMove(gameCommand.getGameID(),gameCommand.getMove(),session, gameCommand.getAuthString());

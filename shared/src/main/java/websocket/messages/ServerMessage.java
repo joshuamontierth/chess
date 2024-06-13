@@ -11,7 +11,7 @@ import java.util.Objects;
  * methods.
  */
 public class ServerMessage {
-    ServerMessageType serverMessageType;
+    ServerMessageType type;
     protected String messageBody;
 
 
@@ -22,14 +22,14 @@ public class ServerMessage {
     }
 
     public ServerMessage(ServerMessageType type, String messageBody) {
-        this.serverMessageType = type;
+        this.type = type;
         this.messageBody = messageBody;
     }
 
 
 
     public ServerMessageType getServerMessageType() {
-        return this.serverMessageType;
+        return this.type;
     }
 
     public String getMessageBody() {
