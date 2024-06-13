@@ -1,15 +1,24 @@
 package ui;
 
 import chess.ChessGame;
+import chess.ChessMove;
+import chess.ChessPiece;
+import chess.ChessPosition;
+import com.google.gson.Gson;
 import model.GameData;
 import utilities.HTMLException;
 import utilities.ServerMessageObserver;
+import utilities.WebsocketConnector;
+import websocket.commands.MakeMoveCommand;
 import websocket.messages.ServerMessage;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.InputMismatchException;
 import java.util.Scanner;
+import java.util.regex.Pattern;
+
 import static java.lang.System.exit;
 
 public class Client implements ServerMessageObserver {
@@ -19,9 +28,13 @@ public class Client implements ServerMessageObserver {
     private ServerFacade server;
     private HashMap<Integer,Integer> gameMap = new HashMap<Integer,Integer>();
     private GameData gameData = null;
+    private String team;
+    private WebsocketConnector websocket;
+    private Integer gameID;
 
-    public void run(String hostname, int port) {
+    public void run(String hostname, int port) throws Exception {
         server = new ServerFacade(hostname, port);
+        websocket = new WebsocketConnector(hostname, port);
         System.out.println("Welcome to 240 Chess");
 
         while(true) {
@@ -45,6 +58,16 @@ public class Client implements ServerMessageObserver {
         System.out.println("3. Join Game");
         System.out.println("4. Observe Game");
         System.out.println("5. Logout");
+        System.out.println("6. Help");
+        System.out.println("Please select an option");
+
+    }
+    private void printGameplayOptions() {
+        System.out.println("1. Redraw Chess Board");
+        System.out.println("2. Make Move");
+        System.out.println("3. Highlight Legal Moves");
+        System.out.println("4. Resign");
+        System.out.println("5. Leave");
         System.out.println("6. Help");
         System.out.println("Please select an option");
 
@@ -92,7 +115,6 @@ public class Client implements ServerMessageObserver {
             switch (option) {
                 case 1:
                     createGame();
-
                     break;
                 case 2:
                     listGames();
@@ -119,6 +141,69 @@ public class Client implements ServerMessageObserver {
         }
 
     }
+    private void gamePlay() throws IOException {
+        printGameplayOptions();
+        Scanner scanner = new Scanner(System.in);
+        try {
+            int option = scanner.nextInt();
+            switch (option) {
+                case 1:
+                    drawBoard();
+                    break;
+                case 2:
+                    makeMove();
+                    break;
+                case 3:
+                    highlightMoves();
+                    break;
+                case 4:
+                    resign();
+                    break;
+                case 5:
+                    leave();
+                    break;
+                case 6:
+                    printGameplayOptions();
+                    break;
+                default:
+                    System.out.println("Invalid option, please enter a number between 1 and 6");
+
+            }
+        }
+        catch (InputMismatchException e) {
+            System.out.println("Invalid input, please enter a number between 1 and 6");
+        }
+    }
+
+    private void drawBoard() {
+        DrawBoard boardDrawer = new DrawBoard(gameData.game().getBoard().getBoard());
+        boolean whiteOrientation = !team.equals("Black");
+        boardDrawer.drawBoard(whiteOrientation);
+    }
+
+    private void makeMove() throws IOException {
+        System.out.println("Enter your move in the following format: e7e8 queen, where queen is the promotion piece if applicable.");
+        String regex = "([a-h][1-8]){2} (queen|knight|bishop|rook)?";
+        Pattern pattern = Pattern.compile(regex);
+        Scanner scanner = new Scanner(System.in);
+        String moveInput = scanner.nextLine();
+        if (!pattern.matcher(moveInput).matches()) {
+            System.out.println("Invalid notation, please enter your move in the following format: e7e8 queen, where queen is the promotion piece if applicable.");
+            return;
+        }
+        int firstCol = moveInput.charAt(0) - 'a' + 1;
+        int firstRow = Character.getNumericValue(moveInput.charAt(1));
+        int secondCol = moveInput.charAt(2) - 'a' + 1;
+        int secondRow = Character.getNumericValue(moveInput.charAt(3));
+        String promotionString = moveInput.substring(5);
+        promotionString = promotionString.toUpperCase();
+        ChessPiece.PieceType promotionPiece = ChessPiece.PieceType.valueOf(promotionString);
+        ChessMove move = new ChessMove(new ChessPosition(firstRow, firstCol), new ChessPosition(secondRow, secondCol),promotionPiece);
+        MakeMoveCommand makeMoveCommand = new MakeMoveCommand(authToken,gameID,move);
+        Gson gson = new Gson();
+        websocket.send(gson.toJson(makeMoveCommand));
+    }
+
 
     private Collection<GameData> listGames() {
         try {

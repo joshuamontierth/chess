@@ -1,7 +1,6 @@
 package utilities;
 
 import com.google.gson.Gson;
-import websocket.commands.UserGameCommand;
 
 import javax.websocket.*;
 import java.io.IOException;
@@ -14,8 +13,8 @@ import java.net.URISyntaxException;
 public class WebsocketConnector extends Endpoint {
     private Session session;
 
-    public WebsocketConnector(int port) throws Exception {
-        URI uri = new URI("ws://localhost:" + port + "/connect");
+    public WebsocketConnector(String hostname, int port) throws Exception {
+        URI uri = new URI("ws://" + hostname + ":" + port + "/connect");
         WebSocketContainer container = ContainerProvider.getWebSocketContainer();
         this.session = container.connectToServer(this, uri);
 
@@ -31,7 +30,7 @@ public class WebsocketConnector extends Endpoint {
     public void onOpen(Session session, EndpointConfig config) {
     }
 
-    public void sendCommand(UserGameCommand msg) throws Exception {
+    public void send(String msg) throws IOException {
         this.session.getBasicRemote().sendText(msg);
     }
 }
