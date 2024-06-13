@@ -12,9 +12,10 @@ import java.util.Objects;
  */
 public class UserGameCommand {
 
-    public UserGameCommand(String authToken) {
+    public UserGameCommand(String authToken,CommandType commandType, int gameID) {
         this.authToken = authToken;
-        move = null;
+        this.gameID = gameID;
+        this.commandType = commandType;
     }
 
     public enum CommandType {
@@ -25,41 +26,18 @@ public class UserGameCommand {
     }
 
     protected CommandType commandType;
+    protected final int gameID;
+    protected final String authToken;
 
-    public void setCommandType(CommandType commandType) {
-        this.commandType = commandType;
-    }
 
-    private final String authToken;
 
-    private ChessMove move;
-    private int gameID;
-    private int colorCode;
 
-    public void setColorCode(int colorCode) {
-        this.colorCode = colorCode;
-    }
-    public int getColorCode() {
-        return colorCode;
-    }
-    public void setGameID(int gameID) {
-        this.gameID = gameID;
-    }
     public int getGameID() {
         return gameID;
     }
-
-    public void setMove (ChessMove move) {
-        this.move = move;
-    }
-    public ChessMove getMove () {
-        return move;
-    }
-
     public String getAuthString() {
         return authToken;
     }
-
     public CommandType getCommandType() {
         return this.commandType;
     }
