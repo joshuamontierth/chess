@@ -207,7 +207,6 @@ public class Client implements ServerMessageObserver {
             System.out.println("Invalid input, please enter a number between 1 and 4");
         }
     }
-
     private void drawBoard() {
         BoardDrawer boardDrawer = new BoardDrawer(gameData.game().getBoard().getBoard());
         boolean whiteOrientation;
@@ -301,7 +300,6 @@ public class Client implements ServerMessageObserver {
         else whiteOrientation = !team.equals("Black");
         boardDrawer.drawBoardValidSquares(gameData.game(),root,whiteOrientation);
     }
-
     private Collection<GameData> listGames() {
         try {
             Collection<GameData> games = server.listGames(authToken);
@@ -482,7 +480,6 @@ public class Client implements ServerMessageObserver {
         }
 
     }
-
     private void processLoadGame(LoadGameMessage message) {
         gameData = message.getGame();
         drawBoard();
@@ -490,11 +487,9 @@ public class Client implements ServerMessageObserver {
             System.out.println(message.getMessageBody());
         }
     }
-
     private void processError(ErrorMessage message) {
         System.out.println(message.getMessageBody());
     }
-
     private void processNotification(NotificationMessage message) {
         if (message.getMessageBody().equals("You have left the game.")) {
             gameplayState = false;

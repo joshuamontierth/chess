@@ -19,8 +19,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class WebSocketService {
-    private static final HashMap<Session, Integer> sessions = new HashMap<>();
-    private static final HashMap<String, Session> userMap = new HashMap<>();
+    private static HashMap<Session, Integer> sessions = new HashMap<>();
+    private static HashMap<String, Session> userMap = new HashMap<>();
 
 
     public static void resign(int gameID, Session session, String authString) throws IOException {
@@ -115,11 +115,7 @@ public class WebSocketService {
             return;
         }
         GameData newGameData = new GameData(gameData.gameID(), gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), game);
-        try {
-            gameDAO.updateGame(newGameData);
-        } catch (DataAccessException e) {
-            throw new RuntimeException(e);
-        }
+
 
 
         ServerMessage madeMoveMessageBroadcast = new LoadGameMessage(username + " has moved " + move,newGameData);
@@ -129,13 +125,18 @@ public class WebSocketService {
         send(session,madeMoveMessage);
 
         specialStateCheck(gameID, game, gameData);
+        try {
+            gameDAO.updateGame(newGameData);
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private static void specialStateCheck(int gameID,ChessGame game, GameData gameData) throws IOException {
         String opponentUsername = game.getTeamTurn()== ChessGame.TeamColor.WHITE ? gameData.whiteUsername() : gameData.blackUsername();
         Session opponentSession = userMap.get(opponentUsername);
         if (game.isInCheckmate(game.getTeamTurn())) {
-            game.setGameComplete();;
+            game.setGameComplete();
             String winningColor = game.oppositeTeam(game.getTeamTurn()).toString().toLowerCase();
             ServerMessage checkmateMessageBroadcast = new NotificationMessage(opponentUsername + " is in checkmate, " + winningColor + " won!");
             broadcast(gameID, opponentSession,checkmateMessageBroadcast);
