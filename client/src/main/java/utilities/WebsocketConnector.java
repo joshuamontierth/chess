@@ -2,8 +2,6 @@ package utilities;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import server.UserGameCommandDeserializer;
-import websocket.commands.UserGameCommand;
 import websocket.messages.ServerMessage;
 
 import javax.websocket.*;

@@ -30,7 +30,8 @@ public class ChessMove {
 
     @Override
     public String toString() {
-        return startPosition.toString() + " -> " + endPosition.toString();
+
+        return Character.toString((char)('a' + startPosition.getColumn()-1)) + startPosition.getRow() + " -> " + (char) ('a' + endPosition.getColumn() - 1) + endPosition.getRow();
     }
 
     public ChessPosition getEndPosition() {

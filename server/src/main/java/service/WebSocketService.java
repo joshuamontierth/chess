@@ -20,6 +20,7 @@ import java.util.HashMap;
 
 public class WebSocketService {
     private static final HashMap<Session, Integer> sessions = new HashMap<>();
+    private static final HashMap<String, Session> userMap = new HashMap<>();
 
 
     public static void resign(int gameID, Session session, String authString) throws IOException {
@@ -36,14 +37,14 @@ public class WebSocketService {
             throw new RuntimeException(e);
         }
         String color = username.equals(game.blackUsername()) ? "White" : "Black";
-        ServerMessage resignBroadcastMessage = new NotificationMessage(username + " has resigned." + color + " has won!");
+        ServerMessage resignBroadcastMessage = new NotificationMessage(username + " has resigned. " + color + "won!");
         broadcast(gameID,session,resignBroadcastMessage);
 
         ServerMessage resignMessage = new NotificationMessage("You have resigned.");
         send(session,resignMessage);
     }
 
-    public static  void leaveGame(int gameID, Session session, String authString) throws IOException {
+    public static void leaveGame(int gameID, Session session, String authString) throws IOException {
         String username = getUsername(authString,session);
         GameData game = getGameData(gameID, session);
         if (username == null || game == null) {
@@ -60,6 +61,7 @@ public class WebSocketService {
         ServerMessage leftBroadcastMessage = new NotificationMessage(username + " has left the game.");
         broadcast(gameID,session,leftBroadcastMessage);
         sessions.remove(session);
+        userMap.remove(username);
 
         ServerMessage leftMessage = new NotificationMessage("You have left the game.");
         send(session,leftMessage);
@@ -87,7 +89,7 @@ public class WebSocketService {
         return newGame;
     }
 
-    public static  void makeMove(int gameID, ChessMove move, Session session, String authString) throws IOException {
+    public static void makeMove(int gameID, ChessMove move, Session session, String authString) throws IOException {
         MySQLGameDAO gameDAO = new MySQLGameDAO();
         GameData gameData = getGameData(gameID,session);
         String username = getUsername(authString,session);
@@ -97,9 +99,15 @@ public class WebSocketService {
         ChessGame game = gameData.game();
 
         try {
+            System.out.println(move);
             game.makeMove(move);
         } catch (InvalidMoveException e) {
-            sendError(session,"Error, invalid move");
+            if (e.getMessage() != null) {
+                sendError(session,e.getMessage());
+            }
+            else {
+                sendError(session, "Error, invalid move");
+            }
             return;
         }
         GameData newGameData = new GameData(gameData.gameID(), gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), game);
@@ -109,16 +117,48 @@ public class WebSocketService {
             throw new RuntimeException(e);
         }
 
+
         ServerMessage madeMoveMessageBroadcast = new LoadGameMessage(username + " has moved " + move,newGameData);
         broadcast(gameID,session,madeMoveMessageBroadcast);
 
         ServerMessage madeMoveMessage = new LoadGameMessage(null, newGameData);
         send(session,madeMoveMessage);
+
+        specialStateCheck(gameID, game, gameData);
+    }
+
+    private static void specialStateCheck(int gameID,ChessGame game, GameData gameData) throws IOException {
+        String opponentUsername = game.getTeamTurn()== ChessGame.TeamColor.WHITE ? gameData.whiteUsername() : gameData.blackUsername();
+        Session opponentSession = userMap.get(opponentUsername);
+        if (game.isInCheckmate(game.getTeamTurn())) {
+            String winningColor = game.oppositeTeam(game.getTeamTurn()).toString().toLowerCase();
+            ServerMessage checkmateMessageBroadcast = new NotificationMessage(opponentUsername + " is in checkmate, " + winningColor + " won!");
+            broadcast(gameID, opponentSession,checkmateMessageBroadcast);
+
+            ServerMessage checkmateMessage = new NotificationMessage("You are in checkmate. You lose!");
+            send(opponentSession,checkmateMessage);
+        }
+        else if(game.isInStalemate(game.getTeamTurn())) {
+            ServerMessage stalemateMessageBroadcast = new NotificationMessage(opponentUsername + " is in stalemate. It's a draw!");
+            broadcast(gameID, opponentSession,stalemateMessageBroadcast);
+
+            ServerMessage stalemateMessage = new NotificationMessage("You are in stalemate. It's a draw!");
+            send(opponentSession,stalemateMessage);
+        }
+        else if (game.isInCheck(game.getTeamTurn())) {
+            ServerMessage checkMessageBroadcast = new NotificationMessage(opponentUsername + " is in check.");
+            broadcast(gameID, opponentSession,checkMessageBroadcast);
+
+            ServerMessage checkMessage = new NotificationMessage("You are in check!");
+            send(opponentSession,checkMessage);
+
+        }
     }
 
     public static void connectUser(int gameID, Session session,String authString) throws IOException {
 
         sessions.put(session,gameID);
+
         String username;
         GameData game = getGameData(gameID, session);
 
@@ -126,6 +166,7 @@ public class WebSocketService {
         if (username == null || game == null) {
             return;
         }
+        userMap.put(username,session);
         String team;
         if (username.equals(game.blackUsername())) {
             team = "black";

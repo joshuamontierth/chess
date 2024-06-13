@@ -2,6 +2,7 @@ package service;
 
 import dataaccess.DataAccessException;
 import dataaccess.GameDAOInterface;
+import dataaccess.MySQLAuthDAO;
 import dataaccess.MySQLGameDAO;
 import model.GameData;
 import utilities.HTMLException;
@@ -34,9 +35,13 @@ public class JoinGameService extends Service {
     }
     private static GameData updateUser(JoinGameRequest req, GameData game, String username) throws HTMLException {
         String playerColorUsername;
-
-
-
+        MySQLAuthDAO authDAO = new MySQLAuthDAO();
+        String playerUsername;
+        try {
+            playerUsername = authDAO.getAuth(req.authToken()).username();
+        } catch (DataAccessException e) {
+            throw new HTMLException(e.getMessage(),401);
+        }
 
         if (req.playerColor().equals("WHITE")) {
             playerColorUsername = game.whiteUsername();
@@ -51,7 +56,7 @@ public class JoinGameService extends Service {
         else {
             throw new HTMLException("Error: Not a valid color", 400);
         }
-        if (playerColorUsername != null) {
+        if (playerColorUsername != null && !playerUsername.equals(username)) {
             throw new HTMLException("Error: already taken", 403);
         }
         GameData updatedGame;

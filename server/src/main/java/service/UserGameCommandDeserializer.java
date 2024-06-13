@@ -1,4 +1,4 @@
-package server;
+package service;
 
 import com.google.gson.*;
 import websocket.commands.*;

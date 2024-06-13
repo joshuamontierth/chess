@@ -192,7 +192,7 @@ public class Client implements ServerMessageObserver {
     }
     private void makeMove() throws IOException {
         System.out.println("Enter your move in the following format: e7e8 queen, where queen is the promotion piece if applicable.");
-        String regex = "([a-h][1-8]){2} (queen|knight|bishop|rook)?";
+        String regex = "([a-h][1-8]){2}( queen| knight| bishop| rook)?";
         Pattern pattern = Pattern.compile(regex);
         Scanner scanner = new Scanner(System.in);
         String moveInput = scanner.nextLine();
@@ -204,9 +204,13 @@ public class Client implements ServerMessageObserver {
         int firstRow = Character.getNumericValue(moveInput.charAt(1));
         int secondCol = moveInput.charAt(2) - 'a' + 1;
         int secondRow = Character.getNumericValue(moveInput.charAt(3));
-        String promotionString = moveInput.substring(5);
-        promotionString = promotionString.toUpperCase();
-        ChessPiece.PieceType promotionPiece = ChessPiece.PieceType.valueOf(promotionString);
+        ChessPiece.PieceType promotionPiece = null;
+        if (moveInput.length() > 4)  {
+            String promotionString = moveInput.substring(5);
+            promotionString = promotionString.toUpperCase();
+            promotionPiece = ChessPiece.PieceType.valueOf(promotionString);
+        }
+
         ChessMove move = new ChessMove(new ChessPosition(firstRow, firstCol), new ChessPosition(secondRow, secondCol),promotionPiece);
         MakeMoveCommand makeMoveCommand = new MakeMoveCommand(authToken,gameID,move);
         Gson gson = new Gson();
