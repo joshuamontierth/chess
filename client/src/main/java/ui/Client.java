@@ -9,6 +9,7 @@ import model.GameData;
 import utilities.HTMLException;
 import utilities.ServerMessageObserver;
 import utilities.WebsocketConnector;
+import websocket.commands.LeaveCommand;
 import websocket.commands.MakeMoveCommand;
 import websocket.messages.ServerMessage;
 
@@ -202,6 +203,19 @@ public class Client implements ServerMessageObserver {
         MakeMoveCommand makeMoveCommand = new MakeMoveCommand(authToken,gameID,move);
         Gson gson = new Gson();
         websocket.send(gson.toJson(makeMoveCommand));
+    }
+    private void resign() throws IOException {
+        System.out.println("Please confirm you would like to leave y/n");
+        Scanner scanner = new Scanner(System.in);
+        String input = scanner.nextLine();
+        if (!input.equals("y")) {
+            System.out.println("Resuming the game");
+            return;
+        }
+        LeaveCommand leaveCommand = new LeaveCommand(authToken,gameID);
+        Gson gson = new Gson();
+        websocket.send(gson.toJson(leaveCommand));
+
     }
 
 
