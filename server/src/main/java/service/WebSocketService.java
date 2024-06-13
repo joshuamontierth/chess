@@ -26,7 +26,12 @@ public class WebSocketService {
     public static void resign(int gameID, Session session, String authString) throws IOException {
         String username = getUsername(authString,session);
         GameData game = getGameData(gameID, session);
+
         if (username == null || game == null) {
+            return;
+        }
+        if (game.game().isGameComplete()) {
+            sendError(session,"Game is complete, you cannot resign.");
             return;
         }
         game.game().setGameComplete();

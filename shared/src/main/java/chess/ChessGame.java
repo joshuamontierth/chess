@@ -42,6 +42,9 @@ public class ChessGame {
     public void setGameComplete() {
         gameComplete = true;
     }
+    public boolean isGameComplete() {
+        return gameComplete;
+    }
 
     /**
      * Enum identifying the 2 possible teams in a chess game
@@ -59,6 +62,9 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
+        if (gameComplete) {
+            return null;
+        }
         if(this.board.getPiece(startPosition) != null) {
             ChessGame.TeamColor pieceTeam = board.getPiece(startPosition).getTeamColor();
             Collection<ChessMove> allPieceMoves = board.getPiece(startPosition).pieceMoves(this.board,startPosition);
