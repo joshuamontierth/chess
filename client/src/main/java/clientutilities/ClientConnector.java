@@ -1,4 +1,4 @@
-package clientUtilities;
+package clientutilities;
 
 import com.google.gson.Gson;
 import utilities.HTMLException;

@@ -1,4 +1,4 @@
-package clientUtilities;
+package clientutilities;
 
 import com.google.gson.*;
 import websocket.messages.ErrorMessage;

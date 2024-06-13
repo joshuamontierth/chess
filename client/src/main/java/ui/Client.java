@@ -6,8 +6,8 @@ import chess.ChessPosition;
 import com.google.gson.Gson;
 import model.GameData;
 import utilities.HTMLException;
-import clientUtilities.ServerMessageObserver;
-import clientUtilities.WebsocketConnector;
+import clientutilities.ServerMessageObserver;
+import clientutilities.WebsocketConnector;
 import websocket.commands.*;
 import websocket.messages.*;
 
