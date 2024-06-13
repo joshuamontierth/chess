@@ -1,6 +1,7 @@
 package utilities;
 
 import com.google.gson.Gson;
+import websocket.commands.UserGameCommand;
 
 import javax.websocket.*;
 import java.io.IOException;
@@ -30,7 +31,7 @@ public class WebsocketConnector extends Endpoint {
     public void onOpen(Session session, EndpointConfig config) {
     }
 
-    public void send(String msg) throws Exception {
+    public void sendCommand(UserGameCommand msg) throws Exception {
         this.session.getBasicRemote().sendText(msg);
     }
 }
